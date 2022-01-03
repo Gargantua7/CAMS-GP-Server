@@ -17,10 +17,16 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude(module = "spring-boot-starter-json")
+    }
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("mysql:mysql-connector-java:8.0.27")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("org.apache.shiro:shiro-spring:1.8.0")
+    implementation("org.ktorm:ktorm-core:3.4.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
