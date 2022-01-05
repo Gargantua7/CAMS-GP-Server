@@ -1,6 +1,6 @@
 package com.gargantua7.cams.gp.server.entity
 
-import com.gargantua7.cams.gp.server.pojo.Person
+import com.gargantua7.cams.gp.server.model.Person
 import org.ktorm.entity.Entity
 import org.ktorm.schema.Table
 import org.ktorm.schema.int
@@ -10,7 +10,7 @@ import org.ktorm.schema.varchar
 /**
  * @author Gargantua7
  */
-object Persons: Table<PersonEntity>("person") {
+object Persons : Table<PersonEntity>("person") {
 
     val username = varchar("username").primaryKey().bindTo { it.username }
     val name = varchar("name").bindTo { it.name }
@@ -22,7 +22,7 @@ object Persons: Table<PersonEntity>("person") {
 
 }
 
-interface PersonEntity: Entity<PersonEntity> {
+interface PersonEntity : Entity<PersonEntity> {
 
     companion object : Entity.Factory<PersonEntity>()
 

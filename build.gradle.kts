@@ -17,9 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude(module = "spring-boot-starter-json")
-    }
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("mysql:mysql-connector-java:8.0.27")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

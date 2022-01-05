@@ -5,7 +5,7 @@ import com.gargantua7.cams.gp.server.entity.Persons
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
 import org.ktorm.entity.filter
-import org.ktorm.entity.firstOrNull
+import org.ktorm.entity.first
 import org.ktorm.entity.sequenceOf
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
@@ -21,8 +21,8 @@ class PersonDao {
 
     val Database.persons get() = sequenceOf(Persons)
 
-    fun selectPersonByUsername(username: String): PersonEntity? {
-        return database.persons.filter { it.username eq username }.firstOrNull()
+    fun selectPersonByUsername(username: String): PersonEntity {
+        return database.persons.filter { it.username eq username }.first()
     }
 
 }

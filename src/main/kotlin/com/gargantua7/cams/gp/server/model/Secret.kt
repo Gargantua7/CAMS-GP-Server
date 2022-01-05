@@ -1,4 +1,4 @@
-package com.gargantua7.cams.gp.server.pojo
+package com.gargantua7.cams.gp.server.model
 
 import com.gargantua7.cams.gp.server.entity.SecretEntity
 

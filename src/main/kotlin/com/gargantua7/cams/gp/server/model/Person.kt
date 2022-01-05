@@ -1,4 +1,4 @@
-package com.gargantua7.cams.gp.server.pojo
+package com.gargantua7.cams.gp.server.model
 
 import com.gargantua7.cams.gp.server.entity.PersonEntity
 
@@ -14,7 +14,15 @@ data class Person(
     var phone: String?,
     var wechat: String?
 ) {
-    constructor(that: PersonEntity) : this(that.username, that.name, that.majorId, that.depId, that.permissionLevel, that.phone, that.wechat)
+    constructor(that: PersonEntity) : this(
+        that.username,
+        that.name,
+        that.majorId,
+        that.depId,
+        that.permissionLevel,
+        that.phone,
+        that.wechat
+    )
 
     fun getEntity() = PersonEntity {
         username = this@Person.username

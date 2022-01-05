@@ -5,7 +5,7 @@ import com.gargantua7.cams.gp.server.entity.Secrets
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
 import org.ktorm.entity.filter
-import org.ktorm.entity.firstOrNull
+import org.ktorm.entity.first
 import org.ktorm.entity.sequenceOf
 import org.ktorm.entity.update
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,8 +22,8 @@ class SecretDao {
 
     val Database.secrets get() = sequenceOf(Secrets)
 
-    fun selectSecretByUsername(username: String): SecretEntity? {
-        return database.secrets.filter { it.username eq username }.firstOrNull()
+    fun selectSecretByUsername(username: String): SecretEntity {
+        return database.secrets.filter { it.username eq username }.first()
     }
 
     fun updateSecret(secret: SecretEntity): Int {

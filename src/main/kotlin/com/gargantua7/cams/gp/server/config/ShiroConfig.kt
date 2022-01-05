@@ -1,7 +1,7 @@
 package com.gargantua7.cams.gp.server.config
 
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
-import com.gargantua7.cams.gp.server.pojo.Result
+import com.gargantua7.cams.gp.server.model.Result
 import com.gargantua7.cams.gp.server.services.PersonService
 import com.gargantua7.cams.gp.server.services.SecretService
 import com.google.gson.Gson
@@ -12,6 +12,8 @@ import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher
 import org.apache.shiro.authz.AuthorizationInfo
 import org.apache.shiro.realm.AuthorizingRealm
+import org.apache.shiro.session.mgt.eis.MemorySessionDAO
+import org.apache.shiro.session.mgt.eis.SessionDAO
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean
 import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.util.ByteSource
@@ -57,7 +59,7 @@ class ShiroConfig {
 
 
     @Bean
-    fun webSecurityManager(@Autowired authorizingRealm: AuthorizingRealm) =
+    fun webSecurityManager(@Autowired authorizingRealm: AuthorizingRealm, @Autowired sessionDAO: SessionDAO) =
         DefaultWebSecurityManager().apply {
             authorizingRealm.credentialsMatcher = HashedCredentialsMatcher().apply {
                 hashAlgorithmName = "sha-256"
@@ -80,9 +82,13 @@ class ShiroConfig {
                 isSessionIdCookieEnabled = false
                 isSessionIdUrlRewritingEnabled = false
                 globalSessionTimeout = 3600000L
+                this.sessionDAO = sessionDAO
             }
             rememberMeManager = null
         }
+
+    @Bean
+    fun sessionDao() = MemorySessionDAO()
 
 
     @Bean
@@ -90,11 +96,6 @@ class ShiroConfig {
         object : AuthorizingRealm() {
             override fun doGetAuthenticationInfo(token: AuthenticationToken): AuthenticationInfo? {
                 val username = (token as UsernamePasswordToken).username
-                try {
-                    personService.selectPersonByUsername(username)
-                } catch (e: Throwable) {
-                    return null
-                }
                 val person = personService.selectPersonByUsername(username)
                 val secret = secretService.selectSecretByUsername(username)
                 val salt = ByteSource.Util.bytes(secret.salt.toString())

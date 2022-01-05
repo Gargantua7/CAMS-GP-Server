@@ -1,6 +1,6 @@
 package com.gargantua7.cams.gp.server.entity
 
-import com.gargantua7.cams.gp.server.pojo.Secret
+import com.gargantua7.cams.gp.server.model.Secret
 import org.ktorm.entity.Entity
 import org.ktorm.schema.Table
 import org.ktorm.schema.int
@@ -10,7 +10,7 @@ import org.ktorm.schema.varchar
 /**
  * @author Gargantua7
  */
-object Secrets: Table<SecretEntity>("secret") {
+object Secrets : Table<SecretEntity>("secret") {
 
     val username = varchar("username").primaryKey().bindTo { it.username }
     val password = varchar("password").bindTo { it.password }

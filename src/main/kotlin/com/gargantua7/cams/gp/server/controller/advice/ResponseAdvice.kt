@@ -1,6 +1,6 @@
 package com.gargantua7.cams.gp.server.controller.advice
 
-import com.gargantua7.cams.gp.server.pojo.Result
+import com.gargantua7.cams.gp.server.model.Result
 import com.google.gson.Gson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.MethodParameter
@@ -15,8 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
  * @author Gargantua7
  */
 @RestControllerAdvice
-class ResponseAdvice: ResponseBodyAdvice<Any> {
-
+class ResponseAdvice : ResponseBodyAdvice<Any> {
 
     @Autowired
     private lateinit var gson: Gson
@@ -25,7 +24,6 @@ class ResponseAdvice: ResponseBodyAdvice<Any> {
         return true
     }
 
-
     override fun beforeBodyWrite(
         body: Any?,
         returnType: MethodParameter,
@@ -33,10 +31,10 @@ class ResponseAdvice: ResponseBodyAdvice<Any> {
         selectedConverterType: Class<out HttpMessageConverter<*>>,
         request: ServerHttpRequest,
         response: ServerHttpResponse
-    ): String {
-        if (body is Result) {
-            return gson.toJson(body)
+    ): Any {
+        return when (body) {
+            is Result, is Map<*, *>, is String -> body
+            else -> Result.success(body)
         }
-        return gson.toJson(Result.success(body))
     }
 }

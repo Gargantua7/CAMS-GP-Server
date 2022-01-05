@@ -1,4 +1,4 @@
-package com.gargantua7.cams.gp.server.pojo
+package com.gargantua7.cams.gp.server.model
 
 import com.gargantua7.cams.gp.server.exception.ResultException
 
@@ -15,6 +15,6 @@ sealed class Result(val code: Int, val msg: String) {
 
 }
 
-class Success<T>(val data: T): Result(0, "OK")
+class Success<T>(val data: T) : Result(0, "OK")
 
-class Failure(code: Int, msg: String, val info: String): Result(code, msg)
+class Failure(code: Int, msg: String, val info: String) : Result(code, msg)

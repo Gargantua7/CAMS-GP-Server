@@ -1,16 +1,20 @@
+
 ###
 # @no-cookie-jar
 POST http://localhost:8081/public/secret/log/in
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-username=1001&password=123456
+{
+  "username": "10001",
+  "password": "123456"
+}
+
 
 
 ###
 # @no-cookie-jar
 GET http://localhost:8081/private/person/info/search/me
 Content-Type: application/x-www-form-urlencoded
-Ordering-Type: json
 session: a6cd8154-22dd-4e2a-8e39-bb77f1b5303c
 
 

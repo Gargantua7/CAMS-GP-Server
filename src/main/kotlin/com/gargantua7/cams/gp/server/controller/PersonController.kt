@@ -1,6 +1,6 @@
 package com.gargantua7.cams.gp.server.controller
 
-import com.gargantua7.cams.gp.server.pojo.Person
+import com.gargantua7.cams.gp.server.model.Person
 import com.gargantua7.cams.gp.server.services.PersonService
 import org.apache.shiro.SecurityUtils
 import org.slf4j.LoggerFactory
