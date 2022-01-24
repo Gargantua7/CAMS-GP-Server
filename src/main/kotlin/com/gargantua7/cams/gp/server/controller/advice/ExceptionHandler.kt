@@ -1,8 +1,8 @@
 package com.gargantua7.cams.gp.server.controller.advice
 
 import com.gargantua7.cams.gp.server.exception.ResultException
-import com.gargantua7.cams.gp.server.model.Failure
-import com.gargantua7.cams.gp.server.model.Result
+import com.gargantua7.cams.gp.server.model.vo.Failure
+import com.gargantua7.cams.gp.server.model.vo.Result
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice

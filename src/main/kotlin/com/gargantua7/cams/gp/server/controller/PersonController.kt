@@ -1,6 +1,6 @@
 package com.gargantua7.cams.gp.server.controller
 
-import com.gargantua7.cams.gp.server.model.Person
+import com.gargantua7.cams.gp.server.model.vo.PersonInfo
 import com.gargantua7.cams.gp.server.services.PersonService
 import org.apache.shiro.SecurityUtils
 import org.slf4j.LoggerFactory
@@ -23,11 +23,11 @@ class PersonController {
     private lateinit var personService: PersonService
 
     @GetMapping("/info/search/me")
-    fun search() = search((SecurityUtils.getSubject().principal as Person).username)
+    fun search() = search(SecurityUtils.getSubject().principal as String)
 
     @GetMapping("/info/search/{username}")
-    fun search(@PathVariable username: String): Person {
-        return personService.selectPersonByUsername(username)
+    fun search(@PathVariable username: String): PersonInfo {
+        return personService.toFullInfo(personService.selectPersonByUsername(username))
     }
 
 }

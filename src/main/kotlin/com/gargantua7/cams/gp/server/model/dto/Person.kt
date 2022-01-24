@@ -1,6 +1,6 @@
-package com.gargantua7.cams.gp.server.model
+package com.gargantua7.cams.gp.server.model.dto
 
-import com.gargantua7.cams.gp.server.entity.PersonEntity
+import com.gargantua7.cams.gp.server.model.po.PersonEntity
 
 /**
  * @author Gargantua7

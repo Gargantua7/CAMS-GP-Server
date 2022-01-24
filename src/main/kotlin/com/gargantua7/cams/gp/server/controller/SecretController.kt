@@ -1,8 +1,9 @@
 package com.gargantua7.cams.gp.server.controller
 
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
-import com.gargantua7.cams.gp.server.exception.NotFoundException
-import com.gargantua7.cams.gp.server.model.Secret
+import com.gargantua7.cams.gp.server.exception.BadRequestException
+import com.gargantua7.cams.gp.server.model.dto.Secret
+import com.gargantua7.cams.gp.server.services.SecretService
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authc.AuthenticationException
 import org.apache.shiro.authc.UsernamePasswordToken
@@ -10,10 +11,7 @@ import org.apache.shiro.session.Session
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 /**
  * @author Gargantua7
@@ -21,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(produces = ["application/json;charset=UTF-8"])
 class SecretController {
+
+    @Autowired
+    private lateinit var secretService: SecretService
 
     @Autowired
     private lateinit var sessionDao: MemorySessionDAO
@@ -32,11 +33,10 @@ class SecretController {
         val subject = SecurityUtils.getSubject()
         val token = UsernamePasswordToken(secret.username, secret.password)
 
-        var exist: Session? = null
+        val sessionList = ArrayList<Session>()
         sessionDao.activeSessions.forEach { s ->
-            logger.info(s.id.toString())
             if (s.getAttribute("username") == secret.username) {
-                exist = s
+                sessionList.add(s)
             }
         }
 
@@ -48,7 +48,7 @@ class SecretController {
 
         token.isRememberMe = false
         subject.session.setAttribute("username", secret.username)
-        exist?.let { it.timeout = 0 }
+        sessionList.forEach { it.timeout = 0 }
         return object {
             val session = subject.session.id
         }
@@ -57,6 +57,15 @@ class SecretController {
     @PostMapping("/private/secret/log/out")
     fun logout() {
         SecurityUtils.getSubject().logout()
+    }
+
+    @PostMapping("/private/secret/update")
+    fun update(@RequestParam old: String, @RequestParam new: String) {
+        if (!"^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9~!@#\$%^&*]{8,16}\$".toRegex().matches(new))
+            throw BadRequestException("Wrong Password Format")
+        val username = SecurityUtils.getSubject().principal as String
+        secretService.updateSecret(username, new, old)
+        logout()
     }
 
 }

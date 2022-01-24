@@ -1,6 +1,6 @@
 package com.gargantua7.cams.gp.server.controller.advice
 
-import com.gargantua7.cams.gp.server.model.Result
+import com.gargantua7.cams.gp.server.model.vo.Result
 import com.google.gson.Gson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.MethodParameter

@@ -1,7 +1,7 @@
 package com.gargantua7.cams.gp.server.dao
 
-import com.gargantua7.cams.gp.server.entity.PersonEntity
-import com.gargantua7.cams.gp.server.entity.Persons
+import com.gargantua7.cams.gp.server.model.dto.Person
+import com.gargantua7.cams.gp.server.model.po.Persons
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
 import org.ktorm.entity.filter
@@ -21,8 +21,8 @@ class PersonDao {
 
     val Database.persons get() = sequenceOf(Persons)
 
-    fun selectPersonByUsername(username: String): PersonEntity {
-        return database.persons.filter { it.username eq username }.first()
+    fun selectPersonByUsername(username: String): Person {
+        return database.persons.filter { it.username eq username }.first().value
     }
 
 }

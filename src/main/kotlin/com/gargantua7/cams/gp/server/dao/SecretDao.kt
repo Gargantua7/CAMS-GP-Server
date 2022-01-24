@@ -1,7 +1,8 @@
 package com.gargantua7.cams.gp.server.dao
 
-import com.gargantua7.cams.gp.server.entity.SecretEntity
-import com.gargantua7.cams.gp.server.entity.Secrets
+import com.gargantua7.cams.gp.server.model.dto.Secret
+import com.gargantua7.cams.gp.server.model.po.SecretEntity
+import com.gargantua7.cams.gp.server.model.po.Secrets
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
 import org.ktorm.entity.filter
@@ -22,8 +23,8 @@ class SecretDao {
 
     val Database.secrets get() = sequenceOf(Secrets)
 
-    fun selectSecretByUsername(username: String): SecretEntity {
-        return database.secrets.filter { it.username eq username }.first()
+    fun selectSecretByUsername(username: String): Secret {
+        return database.secrets.filter { it.username eq username }.first().value
     }
 
     fun updateSecret(secret: SecretEntity): Int {

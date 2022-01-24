@@ -1,7 +1,7 @@
 package com.gargantua7.cams.gp.server.config
 
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
-import com.gargantua7.cams.gp.server.model.Result
+import com.gargantua7.cams.gp.server.model.vo.Result
 import com.gargantua7.cams.gp.server.services.PersonService
 import com.gargantua7.cams.gp.server.services.SecretService
 import com.google.gson.Gson
@@ -96,11 +96,10 @@ class ShiroConfig {
         object : AuthorizingRealm() {
             override fun doGetAuthenticationInfo(token: AuthenticationToken): AuthenticationInfo? {
                 val username = (token as UsernamePasswordToken).username
-                val person = personService.selectPersonByUsername(username)
                 val secret = secretService.selectSecretByUsername(username)
                 val salt = ByteSource.Util.bytes(secret.salt.toString())
 
-                return SimpleAuthenticationInfo(person, secret.password, salt, name)
+                return SimpleAuthenticationInfo(username, secret.password, salt, name)
             }
 
             override fun doGetAuthorizationInfo(principals: PrincipalCollection): AuthorizationInfo? {

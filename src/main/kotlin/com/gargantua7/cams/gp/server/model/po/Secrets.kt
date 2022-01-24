@@ -1,6 +1,6 @@
-package com.gargantua7.cams.gp.server.entity
+package com.gargantua7.cams.gp.server.model.po
 
-import com.gargantua7.cams.gp.server.model.Secret
+import com.gargantua7.cams.gp.server.model.dto.Secret
 import org.ktorm.entity.Entity
 import org.ktorm.schema.Table
 import org.ktorm.schema.int

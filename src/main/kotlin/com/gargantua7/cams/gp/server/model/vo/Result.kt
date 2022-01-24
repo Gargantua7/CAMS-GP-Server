@@ -1,4 +1,4 @@
-package com.gargantua7.cams.gp.server.model
+package com.gargantua7.cams.gp.server.model.vo
 
 import com.gargantua7.cams.gp.server.exception.ResultException
 
