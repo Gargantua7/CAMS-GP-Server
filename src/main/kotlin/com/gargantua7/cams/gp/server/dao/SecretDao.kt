@@ -3,12 +3,10 @@ package com.gargantua7.cams.gp.server.dao
 import com.gargantua7.cams.gp.server.model.dto.Secret
 import com.gargantua7.cams.gp.server.model.po.SecretEntity
 import com.gargantua7.cams.gp.server.model.po.Secrets
+import com.gargantua7.cams.gp.server.util.addIfAbsent
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
-import org.ktorm.entity.filter
-import org.ktorm.entity.first
-import org.ktorm.entity.sequenceOf
-import org.ktorm.entity.update
+import org.ktorm.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
@@ -22,6 +20,10 @@ class SecretDao {
     private lateinit var database: Database
 
     val Database.secrets get() = sequenceOf(Secrets)
+
+    fun insertSecret(secret: Secret): Int {
+        return database.secrets.addIfAbsent(secret.getEntity())
+    }
 
     fun selectSecretByUsername(username: String): Secret {
         return database.secrets.filter { it.username eq username }.first().value

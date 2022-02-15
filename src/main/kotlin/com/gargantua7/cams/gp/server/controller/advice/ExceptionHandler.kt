@@ -18,7 +18,7 @@ class ExceptionHandler {
 
     @ExceptionHandler(ResultException::class)
     fun resultExceptionHandler(httpServletRequest: HttpServletRequest, e: ResultException): Failure {
-        logger.warn("[${httpServletRequest.requestURI}]", e)
+        logger.warn("[${httpServletRequest.requestURI}] ${e.message}")
         return Result.failure(e)
     }
 

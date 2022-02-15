@@ -14,4 +14,6 @@ class BadRequestException(info: String, cause: Throwable? = null) : ResultExcept
 
 class AuthorizedException(info: String, cause: Throwable? = null) : ResultException(401, "Authorized", info, cause)
 
+class ForbiddenException(info: String, cause: Throwable? = null) : ResultException(403, "Forbidden", info, cause)
+
 class NotFoundException(info: String, cause: Throwable? = null) : ResultException(404, "Not Found", info, cause)

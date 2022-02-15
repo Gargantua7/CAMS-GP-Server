@@ -1,8 +1,12 @@
 package com.gargantua7.cams.gp.server.services
 
+import com.gargantua7.cams.gp.server.dao.InfoDao
+import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.dao.SecretDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
+import com.gargantua7.cams.gp.server.exception.ForbiddenException
 import com.gargantua7.cams.gp.server.exception.NotFoundException
+import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.dto.Secret
 import org.apache.shiro.crypto.hash.Sha256Hash
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +22,23 @@ import java.util.*
 class SecretService {
 
     @Autowired
+    private lateinit var infoDao: InfoDao
+
+    @Autowired
+    private lateinit var personDao: PersonDao
+
+    @Autowired
     private lateinit var secretDao: SecretDao
+
+    fun insertSignUpPerson(person: Person, secret: Secret) {
+        infoDao.selectMajorById(person.majorId)
+        try {
+            personDao.insertPerson(person)
+            secretDao.insertSecret(secret)
+        } catch (e: ForbiddenException) {
+            throw ForbiddenException("Person[${person.username}] Already Exists")
+        }
+    }
 
     fun selectSecretByUsername(username: String): Secret {
         try {

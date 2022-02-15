@@ -41,7 +41,8 @@ class ShiroConfig {
         securityManager = webSecurityManager
         filterChainDefinitionMap = mapOf(
             "/public/**" to "anon",
-            "/private/**" to "authc"
+            "/private/**" to "authc",
+
         )
         filters["authc"] = object : FormAuthenticationFilter() {
             override fun onAccessDenied(request: ServletRequest?, response: ServletResponse?): Boolean {

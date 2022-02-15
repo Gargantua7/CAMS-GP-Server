@@ -2,16 +2,22 @@ package com.gargantua7.cams.gp.server.controller
 
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
 import com.gargantua7.cams.gp.server.exception.BadRequestException
+import com.gargantua7.cams.gp.server.matchPassword
+import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.dto.Secret
+import com.gargantua7.cams.gp.server.model.vo.PasswordUpdateModel
+import com.gargantua7.cams.gp.server.model.vo.SignUpModel
 import com.gargantua7.cams.gp.server.services.SecretService
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authc.AuthenticationException
 import org.apache.shiro.authc.UsernamePasswordToken
+import org.apache.shiro.crypto.hash.Sha256Hash
 import org.apache.shiro.session.Session
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 /**
  * @author Gargantua7
@@ -28,8 +34,17 @@ class SecretController {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
-    @PostMapping("/public/secret/log/in")
-    fun login(@RequestBody secret: Secret): Any {
+    @PostMapping("/public/secret/sign/up")
+    fun signUp(@RequestBody info: SignUpModel) {
+        info.require()
+        val person = Person(info.username, info.name, info.majorId, 5, -1, info.phone, info.wechat)
+        val salt = Random().nextInt()
+        val secret = Secret(info.username, Sha256Hash(info.password, salt.toString(), 10).toString(), salt)
+        secretService.insertSignUpPerson(person, secret)
+    }
+
+    @PostMapping("/public/secret/sign/in")
+    fun signIn(@RequestBody secret: Secret): Any {
         val subject = SecurityUtils.getSubject()
         val token = UsernamePasswordToken(secret.username, secret.password)
 
@@ -54,18 +69,18 @@ class SecretController {
         }
     }
 
-    @PostMapping("/private/secret/log/out")
-    fun logout() {
+    @PostMapping("/private/secret/sign/out")
+    fun signOut() {
         SecurityUtils.getSubject().logout()
     }
 
     @PostMapping("/private/secret/update")
-    fun update(@RequestParam old: String, @RequestParam new: String) {
-        if (!"^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9~!@#\$%^&*]{8,16}\$".toRegex().matches(new))
-            throw BadRequestException("Wrong Password Format")
+    fun update(@RequestBody info: PasswordUpdateModel) {
+        val (old, new) = info
+        info.match()
         val username = SecurityUtils.getSubject().principal as String
         secretService.updateSecret(username, new, old)
-        logout()
+        signOut()
     }
 
 }
