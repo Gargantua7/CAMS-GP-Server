@@ -4,7 +4,7 @@ import com.gargantua7.cams.gp.server.dao.InfoDao
 import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.exception.NotFoundException
 import com.gargantua7.cams.gp.server.model.dto.Person
-import com.gargantua7.cams.gp.server.model.vo.PersonInfo
+import com.gargantua7.cams.gp.server.model.vo.FullPersonModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -30,12 +30,16 @@ class PersonService {
         }
     }
 
-    fun toFullInfo(person: Person): PersonInfo {
+    fun updatePersonByModel(person: Person) {
+        personDao.updatePersonByModel(person)
+    }
+
+    fun toFullInfo(person: Person, privateMode: Boolean = false): FullPersonModel {
         val dep = infoDao.selectDepById(person.depId)
         val major = infoDao.selectMajorById(person.majorId)
         val collage = infoDao.selectCollageById(major.collageId)
         val permission = infoDao.selectPermissionByLevel(person.permissionLevel)
-        return PersonInfo(
+        return FullPersonModel(
             person.username,
             person.name,
             major.name,
@@ -43,10 +47,10 @@ class PersonService {
             major.id,
             dep.name,
             dep.id,
-            person.permissionLevel,
+            if (privateMode) null else person.permissionLevel,
             permission.title,
-            person.phone,
-            person.wechat
+            if (privateMode) null else person.phone,
+            if (privateMode) null else person.wechat
         )
     }
 }

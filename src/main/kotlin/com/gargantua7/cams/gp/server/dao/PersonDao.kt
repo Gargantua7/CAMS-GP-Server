@@ -2,13 +2,9 @@ package com.gargantua7.cams.gp.server.dao
 
 import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.po.Persons
-import com.gargantua7.cams.gp.server.util.addIfAbsent
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
-import org.ktorm.entity.add
-import org.ktorm.entity.filter
-import org.ktorm.entity.first
-import org.ktorm.entity.sequenceOf
+import org.ktorm.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
@@ -24,11 +20,15 @@ class PersonDao {
     val Database.persons get() = sequenceOf(Persons)
 
     fun insertPerson(person: Person): Int {
-        return database.persons.addIfAbsent(person.getEntity())
+        return database.persons.add(person.getEntity())
     }
 
     fun selectPersonByUsername(username: String): Person {
         return database.persons.filter { it.username eq username }.first().value
+    }
+
+    fun updatePersonByModel(person: Person): Int {
+        return database.persons.update(person.getEntity())
     }
 
 }

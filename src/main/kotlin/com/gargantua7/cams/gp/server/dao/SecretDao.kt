@@ -3,7 +3,6 @@ package com.gargantua7.cams.gp.server.dao
 import com.gargantua7.cams.gp.server.model.dto.Secret
 import com.gargantua7.cams.gp.server.model.po.SecretEntity
 import com.gargantua7.cams.gp.server.model.po.Secrets
-import com.gargantua7.cams.gp.server.util.addIfAbsent
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
 import org.ktorm.entity.*
@@ -22,7 +21,7 @@ class SecretDao {
     val Database.secrets get() = sequenceOf(Secrets)
 
     fun insertSecret(secret: Secret): Int {
-        return database.secrets.addIfAbsent(secret.getEntity())
+        return database.secrets.add(secret.getEntity())
     }
 
     fun selectSecretByUsername(username: String): Secret {

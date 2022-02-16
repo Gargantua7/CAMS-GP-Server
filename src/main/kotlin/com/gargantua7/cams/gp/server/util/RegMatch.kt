@@ -9,9 +9,9 @@ fun matchPassword(password: String) =
     "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9~!@#\$%^&*]{8,16}\$".toRegex().matches(password)
 
 fun matchUsername(username: String): Boolean {
-    if ("^[0-9]{12}\$".toRegex().matches(username)) return false
+    if (!"^[0-9]{12}\$".toRegex().matches(username)) return false
     val year = Calendar.getInstance().get(Calendar.YEAR)
-    return username.substring(0..3).toInt() in year - 4..year
+    return username.substring(0..3).toInt() <= year
 }
 
 fun matchPhone(phone: String?) =
