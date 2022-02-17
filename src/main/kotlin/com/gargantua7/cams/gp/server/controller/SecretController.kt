@@ -1,8 +1,6 @@
 package com.gargantua7.cams.gp.server.controller
 
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
-import com.gargantua7.cams.gp.server.exception.BadRequestException
-import com.gargantua7.cams.gp.server.matchPassword
 import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.dto.Secret
 import com.gargantua7.cams.gp.server.model.vo.PasswordUpdateModel
@@ -16,7 +14,10 @@ import org.apache.shiro.session.Session
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 /**

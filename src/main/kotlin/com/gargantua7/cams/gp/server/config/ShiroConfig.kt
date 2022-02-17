@@ -17,6 +17,7 @@ import org.apache.shiro.session.mgt.eis.SessionDAO
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean
 import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.util.ByteSource
+import org.apache.shiro.web.filter.InvalidRequestFilter
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest
@@ -30,6 +31,7 @@ import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletResponse
 
+
 /**
  * @author Gargantua7
  */
@@ -37,13 +39,17 @@ import javax.servlet.http.HttpServletResponse
 class ShiroConfig {
 
     @Bean
-    fun shiroFilterFactory(@Autowired webSecurityManager: DefaultWebSecurityManager) = ShiroFilterFactoryBean().apply {
+    fun shiroFilterFactory(
+        @Autowired webSecurityManager: DefaultWebSecurityManager,
+        @Autowired invalidRequestFilter: InvalidRequestFilter
+    ) = ShiroFilterFactoryBean().apply {
         securityManager = webSecurityManager
         filterChainDefinitionMap = mapOf(
             "/public/**" to "anon",
             "/private/**" to "authc",
 
-        )
+            )
+        filters["invalidRequest"] = invalidRequestFilter
         filters["authc"] = object : FormAuthenticationFilter() {
             override fun onAccessDenied(request: ServletRequest?, response: ServletResponse?): Boolean {
                 val httpServletResponse = response as HttpServletResponse
@@ -108,5 +114,8 @@ class ShiroConfig {
             }
 
         }
+
+    @Bean
+    fun invalidRequestFilter() = InvalidRequestFilter().apply { isBlockNonAscii = false }
 
 }

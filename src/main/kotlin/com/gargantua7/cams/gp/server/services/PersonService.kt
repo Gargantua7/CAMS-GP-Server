@@ -30,11 +30,15 @@ class PersonService {
         }
     }
 
+    fun selectPersonListByName(name: String): List<Person> {
+        return personDao.selectPersonListByName(name)
+    }
+
     fun updatePersonByModel(person: Person) {
         personDao.updatePersonByModel(person)
     }
 
-    fun toFullInfo(person: Person, privateMode: Boolean = false): FullPersonModel {
+    fun toFullInfo(person: Person, privacyMode: Boolean = false): FullPersonModel {
         val dep = infoDao.selectDepById(person.depId)
         val major = infoDao.selectMajorById(person.majorId)
         val collage = infoDao.selectCollageById(major.collageId)
@@ -47,10 +51,10 @@ class PersonService {
             major.id,
             dep.name,
             dep.id,
-            if (privateMode) null else person.permissionLevel,
+            if (privacyMode) null else person.permissionLevel,
             permission.title,
-            if (privateMode) null else person.phone,
-            if (privateMode) null else person.wechat
+            if (privacyMode) null else person.phone,
+            if (privacyMode) null else person.wechat
         )
     }
 }
