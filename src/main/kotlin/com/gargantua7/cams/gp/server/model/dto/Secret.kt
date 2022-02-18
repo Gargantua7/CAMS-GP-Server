@@ -12,10 +12,11 @@ data class Secret(
 ) {
     constructor(that: SecretEntity) : this(that.username, that.password, that.salt)
 
-    fun getEntity() = SecretEntity {
-        username = this@Secret.username
-        password = this@Secret.password
-        salt = this@Secret.salt
-    }
+    val entity
+        get() = SecretEntity {
+            username = this@Secret.username
+            password = this@Secret.password
+            salt = this@Secret.salt
+        }
 
 }

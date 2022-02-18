@@ -54,7 +54,7 @@ class SecretService {
             throw AuthorizedException("Wrong Password")
         val salt = Random().nextInt()
         val pwd = Sha256Hash(password, salt.toString(), 10).toString()
-        if (secretDao.updateSecret(Secret(username, pwd, salt).getEntity()) == 0)
+        if (secretDao.updateSecret(Secret(username, pwd, salt).entity) == 0)
             throw RuntimeException("Data Exception: Found User[$username] but the password couldn't be updated")
     }
 

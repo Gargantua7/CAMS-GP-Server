@@ -21,7 +21,7 @@ class SecretDao {
     val Database.secrets get() = sequenceOf(Secrets)
 
     fun insertSecret(secret: Secret): Int {
-        return database.secrets.add(secret.getEntity())
+        return database.secrets.add(secret.entity)
     }
 
     fun selectSecretByUsername(username: String): Secret {

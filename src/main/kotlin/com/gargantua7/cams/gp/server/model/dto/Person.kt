@@ -24,13 +24,14 @@ data class Person(
         that.wechat
     )
 
-    fun getEntity() = PersonEntity {
-        username = this@Person.username
-        name = this@Person.name
-        majorId = this@Person.majorId
-        depId = this@Person.depId
-        permissionLevel = this@Person.permissionLevel
-        phone = this@Person.phone
-        wechat = this@Person.wechat
-    }
+    val entity
+        get() = PersonEntity {
+            username = this@Person.username
+            name = this@Person.name
+            majorId = this@Person.majorId
+            depId = this@Person.depId
+            permissionLevel = this@Person.permissionLevel
+            phone = this@Person.phone
+            wechat = this@Person.wechat
+        }
 }

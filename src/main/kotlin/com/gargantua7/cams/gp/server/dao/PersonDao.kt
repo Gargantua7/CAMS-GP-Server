@@ -21,7 +21,7 @@ class PersonDao {
     val Database.persons get() = sequenceOf(Persons)
 
     fun insertPerson(person: Person): Int {
-        return database.persons.add(person.getEntity())
+        return database.persons.add(person.entity)
     }
 
     fun selectPersonByUsername(username: String): Person {
@@ -77,7 +77,7 @@ class PersonDao {
     }
 
     fun updatePersonByModel(person: Person): Int {
-        return database.persons.update(person.getEntity())
+        return database.persons.update(person.entity)
     }
 
 }
