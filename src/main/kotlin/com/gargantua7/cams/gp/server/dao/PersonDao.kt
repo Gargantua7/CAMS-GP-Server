@@ -1,12 +1,10 @@
 package com.gargantua7.cams.gp.server.dao
 
+import com.gargantua7.cams.gp.server.model.dto.FullPerson
 import com.gargantua7.cams.gp.server.model.dto.Person
-import com.gargantua7.cams.gp.server.model.po.Persons
+import com.gargantua7.cams.gp.server.model.po.*
 import org.ktorm.database.Database
-import org.ktorm.dsl.asc
-import org.ktorm.dsl.desc
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.like
+import org.ktorm.dsl.*
 import org.ktorm.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
@@ -34,6 +32,48 @@ class PersonDao {
         return database.persons.filter { it.name like "$name%" }
             .sortedBy({ it.depId.asc() }, { it.permissionLevel.desc() })
             .map { it.value }
+    }
+
+    fun selectFullPersonByUsername(username: String): FullPerson {
+        return database
+            .from(Persons)
+            .leftJoin(Departments, Persons.depId eq Departments.id)
+            .leftJoin(Majors, Persons.majorId eq Majors.id)
+            .leftJoin(Collages, Majors.collageId eq Collages.id)
+            .leftJoin(Permissions, Persons.permissionLevel eq Permissions.level)
+            .select()
+            .where { Persons.username eq username }
+            .mapToFullPersonList().first()
+    }
+
+    fun selectFullPersonListByName(name: String): List<FullPerson> {
+        return database
+            .from(Persons)
+            .leftJoin(Departments, Persons.depId eq Departments.id)
+            .leftJoin(Majors, Persons.majorId eq Majors.id)
+            .leftJoin(Collages, Majors.collageId eq Collages.id)
+            .leftJoin(Permissions, Persons.permissionLevel eq Permissions.level)
+            .select().where { Persons.name like "$name%" }
+            .orderBy(Persons.depId.asc(), Persons.permissionLevel.desc())
+            .mapToFullPersonList()
+    }
+
+    private fun Query.mapToFullPersonList(): List<FullPerson> {
+        return map { row ->
+            FullPerson(
+                username = row[Persons.username]!!,
+                name = row[Persons.name]!!,
+                major = row[Majors.name]!!,
+                collage = row[Collages.name]!!,
+                majorId = row[Persons.majorId]!!,
+                dep = row[Departments.name]!!,
+                depId = row[Persons.depId]!!,
+                permission = row[Persons.permissionLevel]!!,
+                title = row[Permissions.title]!!,
+                phone = row[Persons.phone],
+                wechat = row[Persons.wechat]
+            )
+        }
     }
 
     fun updatePersonByModel(person: Person): Int {

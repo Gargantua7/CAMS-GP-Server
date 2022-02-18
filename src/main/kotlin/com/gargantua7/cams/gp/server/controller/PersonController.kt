@@ -28,14 +28,14 @@ class PersonController {
     @GetMapping("/public/person/info/search/id/{username}")
     fun searchById(@PathVariable username: String): FullPersonModel {
         val requesterId = SecurityUtils.getSubject().principal as String?
-        val queried = personService.selectPersonByUsername(username)
+        val queried = personService.selectFullPersonByUsername(username)
         if (username != requesterId) {
             val requester = requesterId?.let { personService.selectPersonByUsername(it) }
-            if ((requester?.permissionLevel ?: -99) <= queried.permissionLevel) {
-                return personService.toFullInfo(queried, true)
+            if ((requester?.permissionLevel ?: -99) <= queried.permission) {
+                return queried.toVo(true)
             }
         }
-        return personService.toFullInfo(queried)
+        return queried.toVo()
     }
 
     @GetMapping("/public/person/info/search/name/{name}")
@@ -43,8 +43,8 @@ class PersonController {
         val requesterId = SecurityUtils.getSubject().principal as String?
         val requester = requesterId?.let { personService.selectPersonByUsername(it) }
         val requesterPermission = requester?.permissionLevel ?: -99
-        val list = personService.selectPersonListByName(name).map {
-            personService.toFullInfo(it, requesterId != it.username && requesterPermission <= it.permissionLevel)
+        val list = personService.selectFullPersonListByName(name).map {
+            it.toVo(requesterId != it.username && requesterPermission <= it.permission)
         }
         return object {
             val list = list
