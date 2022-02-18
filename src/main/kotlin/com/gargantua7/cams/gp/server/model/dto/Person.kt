@@ -7,12 +7,12 @@ import com.gargantua7.cams.gp.server.model.po.PersonEntity
  */
 data class Person(
     val username: String,
-    var name: String,
-    var majorId: String,
-    var depId: Int,
-    var permissionLevel: Int,
-    var phone: String?,
-    var wechat: String?
+    val name: String,
+    val majorId: String,
+    val depId: Int,
+    val permissionLevel: Int,
+    val phone: String?,
+    val wechat: String?
 ) {
     constructor(that: PersonEntity) : this(
         that.username,

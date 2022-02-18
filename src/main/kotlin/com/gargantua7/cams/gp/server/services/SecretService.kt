@@ -4,7 +4,6 @@ import com.gargantua7.cams.gp.server.dao.InfoDao
 import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.dao.SecretDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
-import com.gargantua7.cams.gp.server.exception.ForbiddenException
 import com.gargantua7.cams.gp.server.exception.NotFoundException
 import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.dto.Secret
@@ -32,12 +31,8 @@ class SecretService {
 
     fun insertSignUpPerson(person: Person, secret: Secret) {
         infoDao.selectMajorById(person.majorId)
-        try {
-            personDao.insertPerson(person)
-            secretDao.insertSecret(secret)
-        } catch (e: ForbiddenException) {
-            throw ForbiddenException("Person[${person.username}] Already Exists")
-        }
+        personDao.insertPerson(person)
+        secretDao.insertSecret(secret)
     }
 
     fun selectSecretByUsername(username: String): Secret {

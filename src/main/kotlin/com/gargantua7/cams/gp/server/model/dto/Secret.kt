@@ -7,8 +7,8 @@ import com.gargantua7.cams.gp.server.model.po.SecretEntity
  */
 data class Secret(
     val username: String,
-    var password: String,
-    var salt: Int = 0
+    val password: String,
+    val salt: Int = 0
 ) {
     constructor(that: SecretEntity) : this(that.username, that.password, that.salt)
 
