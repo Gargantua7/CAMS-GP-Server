@@ -27,7 +27,8 @@ class RepairService {
     }
 
     fun assignPrincipleByUUID(uuid: String, principle: String) {
-        repairDao.assignPrincipleByUUID(uuid, principle)
+        if (repairDao.assignPrincipleByUUID(uuid, principle) != 1)
+            throw NotFoundException("Repair[$uuid] Not Found")
     }
 
     fun changeStateByUUIDWithAuth(uuid: String, state: Boolean, requesterId: String) {
