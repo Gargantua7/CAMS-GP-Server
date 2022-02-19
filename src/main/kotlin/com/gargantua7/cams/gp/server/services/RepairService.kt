@@ -19,4 +19,8 @@ class RepairService {
     fun insertNewRepair(repair: Repair) {
         repairDao.insert(repair)
     }
+
+    fun assignPrincipleByUUID(uuid: String, principle: String) {
+        repairDao.assignPrincipleByUUID(uuid, principle)
+    }
 }

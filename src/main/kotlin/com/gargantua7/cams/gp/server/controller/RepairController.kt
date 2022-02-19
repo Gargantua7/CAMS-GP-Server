@@ -6,10 +6,7 @@ import com.gargantua7.cams.gp.server.services.RepairService
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authz.annotation.*
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 /**
  * @author Gargantua7
@@ -34,4 +31,12 @@ class RepairController {
         repairService.insertNewRepair(repair)
     }
 
+
+    @RequiresAuthentication
+    @RequiresRoles("dep:1")
+    @RequiresPermissions("Dep")
+    @PostMapping("/repair/{uuid}/assign/{principle}")
+    fun assignPrincipal(@PathVariable uuid: String, @PathVariable principle: String) {
+        repairService.assignPrincipleByUUID(uuid, principle)
+    }
 }
