@@ -6,6 +6,8 @@ import org.ktorm.database.Database
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.update
 import org.ktorm.entity.add
+import org.ktorm.entity.filter
+import org.ktorm.entity.first
 import org.ktorm.entity.sequenceOf
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
@@ -25,9 +27,20 @@ class RepairDao {
         return database.repairs.add(repair.entity)
     }
 
+    fun selectRepairByUUID(uuid: String): Repair {
+        return database.repairs.filter { it.uuid eq uuid }.first().value
+    }
+
     fun assignPrincipleByUUID(uuid: String, principle: String): Int {
         return database.update(Repairs) {
             set(it.principal, principle)
+            where { it.uuid eq uuid }
+        }
+    }
+
+    fun changeStateByUUID(uuid: String, state: Boolean): Int {
+        return database.update(Repairs) {
+            set(it.state, state)
             where { it.uuid eq uuid }
         }
     }

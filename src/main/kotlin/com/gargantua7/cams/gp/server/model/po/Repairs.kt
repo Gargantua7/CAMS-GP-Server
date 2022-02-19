@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.server.model.po
 
+import com.gargantua7.cams.gp.server.model.dto.Repair
 import org.ktorm.entity.Entity
 import org.ktorm.schema.*
 import java.time.LocalDateTime
@@ -32,4 +33,6 @@ interface RepairEntity: Entity<RepairEntity> {
     var updateTime: LocalDateTime
     var state: Boolean
     var private: Boolean
+
+    val value get() = Repair(this)
 }

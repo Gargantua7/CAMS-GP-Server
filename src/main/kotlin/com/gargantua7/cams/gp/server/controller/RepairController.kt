@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.server.controller
 
+import com.gargantua7.cams.gp.server.exception.BadRequestException
 import com.gargantua7.cams.gp.server.model.dto.Repair
 import com.gargantua7.cams.gp.server.model.vo.NewRepairModel
 import com.gargantua7.cams.gp.server.services.RepairService
@@ -38,5 +39,12 @@ class RepairController {
     @PostMapping("/repair/{uuid}/assign/{principle}")
     fun assignPrincipal(@PathVariable uuid: String, @PathVariable principle: String) {
         repairService.assignPrincipleByUUID(uuid, principle)
+    }
+
+    @RequiresAuthentication
+    @PostMapping("/repair/{uuid}/state/change/{state}")
+    fun changeState(@PathVariable uuid: String, @PathVariable state: String) {
+        if (state !in arrayOf("open", "close")) throw BadRequestException("Wrong Request Parma")
+        repairService.changeStateByUUIDWithAuth(uuid, state == "open", SecurityUtils.getSubject().principal as String)
     }
 }
