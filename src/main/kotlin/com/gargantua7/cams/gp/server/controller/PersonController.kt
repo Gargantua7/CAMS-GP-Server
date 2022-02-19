@@ -1,6 +1,6 @@
 package com.gargantua7.cams.gp.server.controller
 
-import com.gargantua7.cams.gp.server.exception.ForbiddenException
+import com.gargantua7.cams.gp.server.exception.AuthorizedException
 import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.vo.FullPersonModel
 import com.gargantua7.cams.gp.server.model.vo.PersonInfoUpdateModel
@@ -62,7 +62,7 @@ class PersonController {
         if (requesterId != model.username) {
             val requester = personService.selectPersonByUsername(requesterId)
             if (requester.permissionLevel <= updated.permissionLevel)
-                throw ForbiddenException("Insufficient Permissions")
+                throw AuthorizedException("Insufficient Permissions")
         }
         val person = Person(
             updated.username,
