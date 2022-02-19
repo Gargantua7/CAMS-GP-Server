@@ -29,13 +29,16 @@ class ExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException::class)
-    fun dataIntegrityViolationExceptionHandler(httpServletRequest: HttpServletRequest, e: DataIntegrityViolationException): Failure {
+    fun dataIntegrityViolationExceptionHandler(
+        httpServletRequest: HttpServletRequest,
+        e: DataIntegrityViolationException
+    ): Failure {
         logger.warn("[${httpServletRequest.requestURI}] ${e.message}")
         return Result.failure(ForbiddenException("Wrong Request Param", e))
     }
 
     @ExceptionHandler(DuplicateKeyException::class)
-    fun duplicateKeyException(httpServletRequest: HttpServletRequest, e: DuplicateKeyException): Failure {
+    fun duplicateKeyExceptionHandler(httpServletRequest: HttpServletRequest, e: DuplicateKeyException): Failure {
         logger.warn("[${httpServletRequest.requestURI}] ${e.message}")
         return Result.failure(ForbiddenException("Resource Already Exists", e))
     }
