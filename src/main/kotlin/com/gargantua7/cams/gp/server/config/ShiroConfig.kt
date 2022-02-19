@@ -5,15 +5,20 @@ import com.gargantua7.cams.gp.server.model.vo.Result
 import com.gargantua7.cams.gp.server.services.PersonService
 import com.gargantua7.cams.gp.server.services.SecretService
 import com.google.gson.Gson
+import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.AuthenticationToken
 import org.apache.shiro.authc.SimpleAuthenticationInfo
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher
 import org.apache.shiro.authz.AuthorizationInfo
+import org.apache.shiro.authz.SimpleAuthorizationInfo
+import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.realm.AuthorizingRealm
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO
 import org.apache.shiro.session.mgt.eis.SessionDAO
+import org.apache.shiro.spring.LifecycleBeanPostProcessor
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean
 import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.util.ByteSource
@@ -23,6 +28,7 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager
 import org.apache.shiro.web.util.WebUtils
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -44,11 +50,6 @@ class ShiroConfig {
         @Autowired invalidRequestFilter: InvalidRequestFilter
     ) = ShiroFilterFactoryBean().apply {
         securityManager = webSecurityManager
-        filterChainDefinitionMap = mapOf(
-            "/public/**" to "anon",
-            "/private/**" to "authc",
-
-            )
         filters["invalidRequest"] = invalidRequestFilter
         filters["authc"] = object : FormAuthenticationFilter() {
             override fun onAccessDenied(request: ServletRequest?, response: ServletResponse?): Boolean {
@@ -101,7 +102,7 @@ class ShiroConfig {
     @Bean
     fun realm(@Autowired personService: PersonService, @Autowired secretService: SecretService) =
         object : AuthorizingRealm() {
-            override fun doGetAuthenticationInfo(token: AuthenticationToken): AuthenticationInfo? {
+            override fun doGetAuthenticationInfo(token: AuthenticationToken): AuthenticationInfo {
                 val username = (token as UsernamePasswordToken).username
                 val secret = secretService.selectSecretByUsername(username)
                 val salt = ByteSource.Util.bytes(secret.salt.toString())
@@ -109,8 +110,17 @@ class ShiroConfig {
                 return SimpleAuthenticationInfo(username, secret.password, salt, name)
             }
 
-            override fun doGetAuthorizationInfo(principals: PrincipalCollection): AuthorizationInfo? {
-                return null
+            val permission = listOf("Member", "Officer", "d_Dep", "Dep", "d_Club", "Club", "Admin")
+
+            override fun doGetAuthorizationInfo(principals: PrincipalCollection): AuthorizationInfo {
+                val info = SimpleAuthorizationInfo()
+                val username = SecurityUtils.getSubject().principal as String
+                val person = personService.selectPersonByUsername(username)
+                info.addRole("dep:${person.depId}")
+                info.addStringPermissions(permission.subList(0, person.permissionLevel.let {
+                    if (it < 0) 0 else if (it > permission.lastIndex) permission.lastIndex else it
+                } + 1))
+                return info
             }
 
         }
@@ -118,4 +128,17 @@ class ShiroConfig {
     @Bean
     fun invalidRequestFilter() = InvalidRequestFilter().apply { isBlockNonAscii = false }
 
+    @Bean
+    fun getLifecycleBeanPostProcessor() = LifecycleBeanPostProcessor()
+
+    @Bean
+    fun defaultAdvisorAutoProxyCreator() = DefaultAdvisorAutoProxyCreator().apply {
+        isProxyTargetClass = true
+    }
+
+    @Bean
+    fun authorizationAttributeSourceAdvisor(securityManager: SecurityManager) =
+        AuthorizationAttributeSourceAdvisor().apply {
+            this.securityManager = securityManager
+        }
 }

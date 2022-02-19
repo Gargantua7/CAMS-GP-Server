@@ -9,15 +9,14 @@ import com.gargantua7.cams.gp.server.services.SecretService
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authc.AuthenticationException
 import org.apache.shiro.authc.UsernamePasswordToken
+import org.apache.shiro.authz.annotation.RequiresAuthentication
+import org.apache.shiro.authz.annotation.RequiresGuest
 import org.apache.shiro.crypto.hash.Sha256Hash
 import org.apache.shiro.session.Session
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 /**
@@ -35,7 +34,8 @@ class SecretController {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
-    @PostMapping("/public/secret/sign/up")
+    @RequiresGuest
+    @PostMapping("/secret/sign/up")
     fun signUp(@RequestBody info: SignUpModel) {
         info.require()
         val person = Person(info.username, info.name, info.majorId, 5, -1, info.phone, info.wechat)
@@ -44,7 +44,8 @@ class SecretController {
         secretService.insertSignUpPerson(person, secret)
     }
 
-    @PostMapping("/public/secret/sign/in")
+    @RequiresGuest
+    @PostMapping("/secret/sign/in")
     fun signIn(@RequestBody secret: Secret): Any {
         val subject = SecurityUtils.getSubject()
         val token = UsernamePasswordToken(secret.username, secret.password)
@@ -70,11 +71,13 @@ class SecretController {
         }
     }
 
-    @PostMapping("/private/secret/sign/out")
+    @RequiresAuthentication
+    @PostMapping("/secret/sign/out")
     fun signOut() {
         SecurityUtils.getSubject().logout()
     }
 
+    @RequiresAuthentication
     @PostMapping("/private/secret/update")
     fun update(@RequestBody info: PasswordUpdateModel) {
         val (old, new) = info

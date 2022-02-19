@@ -4,6 +4,7 @@ import com.gargantua7.cams.gp.server.model.dto.Repair
 import com.gargantua7.cams.gp.server.model.vo.NewRepairModel
 import com.gargantua7.cams.gp.server.services.RepairService
 import org.apache.shiro.SecurityUtils
+import org.apache.shiro.authz.annotation.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,7 +21,8 @@ class RepairController {
     @Autowired
     private lateinit var repairService: RepairService
 
-    @PostMapping("/private/repair/create")
+    @RequiresAuthentication
+    @PostMapping("/repair/create")
     fun createNewRepair(@RequestBody model: NewRepairModel) {
         model.require()
         val repair = Repair(

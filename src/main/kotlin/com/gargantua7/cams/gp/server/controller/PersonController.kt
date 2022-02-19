@@ -6,6 +6,7 @@ import com.gargantua7.cams.gp.server.model.vo.FullPersonModel
 import com.gargantua7.cams.gp.server.model.vo.PersonInfoUpdateModel
 import com.gargantua7.cams.gp.server.services.PersonService
 import org.apache.shiro.SecurityUtils
+import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -22,10 +23,11 @@ class PersonController {
     @Autowired
     private lateinit var personService: PersonService
 
-    @GetMapping("/private/person/info/search/me")
+    @RequiresAuthentication
+    @GetMapping("/person/info/search/me")
     fun searchMe() = searchById(SecurityUtils.getSubject().principal as String)
 
-    @GetMapping("/public/person/info/search/id/{username}")
+    @GetMapping("/person/info/search/id/{username}")
     fun searchById(@PathVariable username: String): FullPersonModel {
         val requesterId = SecurityUtils.getSubject().principal as String?
         val queried = personService.selectFullPersonByUsername(username)
@@ -38,7 +40,7 @@ class PersonController {
         return queried.toVo()
     }
 
-    @GetMapping("/public/person/info/search/name/{name}")
+    @GetMapping("/person/info/search/name/{name}")
     fun searchByName(@PathVariable name: String): Any {
         val requesterId = SecurityUtils.getSubject().principal as String?
         val requester = requesterId?.let { personService.selectPersonByUsername(it) }
@@ -51,7 +53,8 @@ class PersonController {
         }
     }
 
-    @PostMapping("/private/person/info/update")
+    @RequiresAuthentication
+    @PostMapping("/person/info/update")
     fun update(@RequestBody model: PersonInfoUpdateModel) {
         model.require()
         val requesterId = SecurityUtils.getSubject().principal as String
