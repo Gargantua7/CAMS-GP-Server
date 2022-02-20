@@ -28,12 +28,24 @@ class InfoDao {
     val Database.deps get() = sequenceOf(Departments)
     val Database.permissions get() = sequenceOf(Permissions)
 
+    fun selectAllDep(): List<Department> {
+        return database.deps.toList()
+    }
+
     fun selectDepById(id: Int): Department {
         return database.deps.filter { it.id eq id }.single()
     }
 
     fun selectMajorById(id: String): Major {
         return database.majors.filter { it.id eq id }.single()
+    }
+
+    fun selectMajorListByCollageId(collageId: String): List<Major> {
+        return database.majors.filter { it.collageId eq collageId }.toList()
+    }
+
+    fun selectAllCollage(): List<Collage> {
+        return database.collages.toList()
     }
 
     fun selectCollageById(id: String): Collage {
