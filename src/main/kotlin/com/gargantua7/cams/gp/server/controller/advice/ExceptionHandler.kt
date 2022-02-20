@@ -1,8 +1,6 @@
 package com.gargantua7.cams.gp.server.controller.advice
 
-import com.gargantua7.cams.gp.server.exception.AuthorizedException
-import com.gargantua7.cams.gp.server.exception.ForbiddenException
-import com.gargantua7.cams.gp.server.exception.ResultException
+import com.gargantua7.cams.gp.server.exception.*
 import com.gargantua7.cams.gp.server.model.vo.Failure
 import com.gargantua7.cams.gp.server.model.vo.Result
 import org.apache.shiro.authz.UnauthenticatedException
@@ -10,6 +8,7 @@ import org.apache.shiro.authz.UnauthorizedException
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.DuplicateKeyException
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import javax.servlet.http.HttpServletRequest
@@ -53,6 +52,18 @@ class ExceptionHandler {
     fun unauthenticatedExceptionHandler(httpServletRequest: HttpServletRequest, e: UnauthenticatedException): Failure {
         logger.warn("[${httpServletRequest.requestURI}] ${e.message}")
         return Result.failure(AuthorizedException("Unauthorized", e))
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
+    fun httpRequestMethodNotSupportedExceptionHandler(httpServletRequest: HttpServletRequest, e: HttpRequestMethodNotSupportedException): Failure {
+        logger.warn("[${httpServletRequest.requestURI}] ${e.message}")
+        return Result.failure(BadRequestException("Http Request Method Not Supported", e))
+    }
+
+    @ExceptionHandler(NoSuchElementException::class)
+    fun noSuchElementExceptionHandler(httpServletRequest: HttpServletRequest, e: NoSuchElementException): Failure {
+        logger.warn("[${httpServletRequest.requestURI}] ${e.message}")
+        return Result.failure(NotFoundException("Resource Not Found", e))
     }
 
     @ExceptionHandler(Exception::class)
