@@ -23,8 +23,44 @@ class RepairDao {
         return database.repairs.add(repair.entity)
     }
 
+    fun selectAllRepairUUIDWithLimit(page: Int): List<String> {
+        return database
+            .from(Repairs)
+            .select()
+            .limit(page, 10)
+            .orderBy(Repairs.updateTime.desc())
+            .map { row -> row[Repairs.uuid]!! }
+    }
+
+    fun selectAllPublicRepairUUIDWithLimit(page: Int, requesterId: String): List<String> {
+        return database
+            .from(Repairs)
+            .select()
+            .where { (Repairs.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId) }
+            .limit(page, 10)
+            .orderBy(Repairs.updateTime.desc())
+            .map { row -> row[Repairs.uuid]!! }
+    }
+
     fun selectRepairByUUID(uuid: String): Repair {
         return database.repairs.filter { it.uuid eq uuid }.single().value
+    }
+
+    fun selectRepairUUIDListByKeyword(key: String): List<String> {
+        return database.repairs
+            .filter { (it.title like "%$key%") or (it.content like "%$key%") }
+            .map { it.uuid }
+    }
+
+    fun selectPublicRepairUUIDListByKeyword(key: String, requesterId: String): List<String> {
+        return database.repairs
+            .filter { (it.title like "%$key%") or (it.content like "%$key%") }
+            .filter { (it.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId) }
+            .map { it.uuid }
+    }
+
+    fun selectRepairUUIDWithUnassigned(): List<String> {
+        return database.repairs.filter { it.principal.isNull() }.map { it.uuid }
     }
 
     fun assignPrincipleByUUID(uuid: String, principle: String): Int {

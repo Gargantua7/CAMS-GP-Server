@@ -1,11 +1,16 @@
 package com.gargantua7.cams.gp.server.controller
 
+import com.gargantua7.cams.gp.server.exception.AuthorizedException
 import com.gargantua7.cams.gp.server.exception.BadRequestException
 import com.gargantua7.cams.gp.server.model.dto.Repair
 import com.gargantua7.cams.gp.server.model.vo.NewRepairModel
+import com.gargantua7.cams.gp.server.services.PersonService
 import com.gargantua7.cams.gp.server.services.RepairService
+import com.gargantua7.cams.gp.server.util.response
 import org.apache.shiro.SecurityUtils
-import org.apache.shiro.authz.annotation.*
+import org.apache.shiro.authz.annotation.RequiresAuthentication
+import org.apache.shiro.authz.annotation.RequiresPermissions
+import org.apache.shiro.authz.annotation.RequiresRoles
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
@@ -15,6 +20,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(produces = ["application/json;charset=UTF-8"])
 class RepairController {
+
+    @Autowired
+    private lateinit var personService: PersonService
 
     @Autowired
     private lateinit var repairService: RepairService
@@ -32,7 +40,6 @@ class RepairController {
         repairService.insertNewRepair(repair)
     }
 
-
     @RequiresAuthentication
     @RequiresRoles("dep:1")
     @RequiresPermissions("Dep")
@@ -46,5 +53,35 @@ class RepairController {
     fun changeState(@PathVariable uuid: String, @PathVariable state: String) {
         if (state !in arrayOf("open", "close")) throw BadRequestException("Wrong Request Parma")
         repairService.changeStateByUUIDWithAuth(uuid, state == "open", SecurityUtils.getSubject().principal as String)
+    }
+
+    @GetMapping("/repair/uuid/list/page/{page}")
+    fun getWithPage(@PathVariable page: Int): Any {
+        return repairService.selectAllRepairUUIDListWithPage(page).response
+    }
+
+    @GetMapping("/repair/get/uuid/{uuid}")
+    fun getByUUID(@PathVariable uuid: String): Repair {
+        val repair = repairService.selectRepairByUUID(uuid)
+        if (!repair.private) return repair
+        val requestId =
+            (SecurityUtils.getSubject().principal as String?) ?: throw AuthorizedException("Insufficient Permissions")
+        if (requestId == repair.initiator || requestId == repair.principal) return repair
+        val requester = personService.selectPersonByUsername(requestId)
+        if (requester.permissionLevel > 3 && requester.depId == 1) return repair
+        throw AuthorizedException("Insufficient Permissions")
+    }
+
+    @RequiresAuthentication
+    @RequiresRoles("dep:1")
+    @RequiresPermissions("Dep")
+    @GetMapping("/repair/uuid/list/unassigned")
+    fun getUnassigned(): Any {
+        return repairService.selectRepairUUIDWithUnassigned().response
+    }
+
+    @GetMapping("/repair/uuid/list/keyword/{key}")
+    fun search(@PathVariable key: String): Any {
+        return repairService.selectRepairUUIDListByKeyword(key).response
     }
 }
