@@ -10,9 +10,7 @@ import com.gargantua7.cams.gp.server.model.po.Majors
 import com.gargantua7.cams.gp.server.model.po.Permissions
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
-import org.ktorm.entity.filter
-import org.ktorm.entity.first
-import org.ktorm.entity.sequenceOf
+import org.ktorm.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
@@ -31,18 +29,18 @@ class InfoDao {
     val Database.permissions get() = sequenceOf(Permissions)
 
     fun selectDepById(id: Int): Department {
-        return database.deps.filter { it.id eq id }.first()
+        return database.deps.filter { it.id eq id }.single()
     }
 
     fun selectMajorById(id: String): Major {
-        return database.majors.filter { it.id eq id }.first()
+        return database.majors.filter { it.id eq id }.single()
     }
 
     fun selectCollageById(id: String): Collage {
-        return database.collages.filter { it.id eq id }.first()
+        return database.collages.filter { it.id eq id }.single()
     }
 
     fun selectPermissionByLevel(level: Int): Permission {
-        return database.permissions.filter { it.level eq level }.first()
+        return database.permissions.filter { it.level eq level }.single()
     }
 }

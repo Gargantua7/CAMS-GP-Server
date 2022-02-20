@@ -25,7 +25,7 @@ class SecretDao {
     }
 
     fun selectSecretByUsername(username: String): Secret {
-        return database.secrets.filter { it.username eq username }.first().value
+        return database.secrets.filter { it.username eq username }.single().value
     }
 
     fun updateSecret(secret: SecretEntity): Int {

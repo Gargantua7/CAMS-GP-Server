@@ -25,7 +25,7 @@ class PersonDao {
     }
 
     fun selectPersonByUsername(username: String): Person {
-        return database.persons.filter { it.username eq username }.first().value
+        return database.persons.filter { it.username eq username }.single().value
     }
 
     fun selectPersonListByName(name: String): List<Person> {
@@ -43,7 +43,7 @@ class PersonDao {
             .leftJoin(Permissions, Persons.permissionLevel eq Permissions.level)
             .select()
             .where { Persons.username eq username }
-            .mapToFullPersonList().first()
+            .mapToFullPersonList().single()
     }
 
     fun selectFullPersonListByName(name: String): List<FullPerson> {

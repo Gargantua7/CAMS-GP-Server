@@ -3,12 +3,8 @@ package com.gargantua7.cams.gp.server.dao
 import com.gargantua7.cams.gp.server.model.dto.Repair
 import com.gargantua7.cams.gp.server.model.po.Repairs
 import org.ktorm.database.Database
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.update
-import org.ktorm.entity.add
-import org.ktorm.entity.filter
-import org.ktorm.entity.first
-import org.ktorm.entity.sequenceOf
+import org.ktorm.dsl.*
+import org.ktorm.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
@@ -28,7 +24,7 @@ class RepairDao {
     }
 
     fun selectRepairByUUID(uuid: String): Repair {
-        return database.repairs.filter { it.uuid eq uuid }.first().value
+        return database.repairs.filter { it.uuid eq uuid }.single().value
     }
 
     fun assignPrincipleByUUID(uuid: String, principle: String): Int {
