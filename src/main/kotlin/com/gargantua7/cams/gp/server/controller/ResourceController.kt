@@ -5,6 +5,7 @@ import com.gargantua7.cams.gp.server.model.dto.Collage
 import com.gargantua7.cams.gp.server.model.dto.Department
 import com.gargantua7.cams.gp.server.model.dto.Major
 import com.gargantua7.cams.gp.server.model.dto.Permission
+import com.gargantua7.cams.gp.server.util.ListResponse
 import com.gargantua7.cams.gp.server.util.response
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,7 +25,7 @@ class ResourceController {
     private lateinit var infoDao: InfoDao
 
     @GetMapping("/res/list/dep")
-    fun selectAllDep(): Any {
+    fun selectAllDep(): ListResponse<Department> {
         return infoDao.selectAllDep().response
     }
 
@@ -39,12 +40,12 @@ class ResourceController {
     }
 
     @GetMapping("/res/list/collage/{id}/major")
-    fun selectMajorListByCollageId(@PathVariable id: String): Any {
+    fun selectMajorListByCollageId(@PathVariable id: String): ListResponse<Major> {
         return infoDao.selectMajorListByCollageId(id).response
     }
 
     @GetMapping("/res/list/collage")
-    fun selectAllCollage(): Any {
+    fun selectAllCollage(): ListResponse<Collage> {
         return infoDao.selectAllCollage().response
     }
 

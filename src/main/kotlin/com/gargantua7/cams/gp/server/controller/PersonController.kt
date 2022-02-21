@@ -5,6 +5,8 @@ import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.vo.FullPersonModel
 import com.gargantua7.cams.gp.server.model.vo.PersonInfoUpdateModel
 import com.gargantua7.cams.gp.server.services.PersonService
+import com.gargantua7.cams.gp.server.util.ListResponse
+import com.gargantua7.cams.gp.server.util.response
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.slf4j.LoggerFactory
@@ -41,16 +43,14 @@ class PersonController {
     }
 
     @GetMapping("/person/info/search/name/{name}")
-    fun searchByName(@PathVariable name: String): Any {
+    fun searchByName(@PathVariable name: String): ListResponse<FullPersonModel> {
         val requesterId = SecurityUtils.getSubject().principal as String?
         val requester = requesterId?.let { personService.selectPersonByUsername(it) }
         val requesterPermission = requester?.permissionLevel ?: -99
         val list = personService.selectFullPersonListByName(name).map {
             it.toVo(requesterId != it.username && requesterPermission <= it.permission)
         }
-        return object {
-            val list = list
-        }
+        return list.response
     }
 
     @RequiresAuthentication
