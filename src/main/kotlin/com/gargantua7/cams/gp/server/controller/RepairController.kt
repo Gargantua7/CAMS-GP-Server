@@ -71,6 +71,12 @@ class RepairController {
         throw AuthorizedException("Insufficient Permissions")
     }
 
+
+    @GetMapping("/repair/uuid/list/person/{username}")
+    fun getByPersonUsername(@PathVariable username: String): List<String> {
+        return repairService.selectRepairUUIDListByPerson(username)
+    }
+
     @RequiresAuthentication
     @RequiresRoles("dep:1")
     @RequiresPermissions("Dep")

@@ -48,6 +48,10 @@ class RepairService {
         return securityCalled(key, repairDao::selectRepairUUIDListByKeyword)
     }
 
+    fun selectRepairUUIDListByPerson(person: String): List<String> {
+        return securityCalled(person, repairDao::selectRepairUUIDListByPerson)
+    }
+
     fun selectRepairUUIDWithUnassigned(): List<String> {
         return repairDao.selectRepairUUIDWithUnassigned()
     }

@@ -52,6 +52,16 @@ class RepairDao {
         return database.repairs.filter { it.principal.isNull() }.map { it.uuid }
     }
 
+    fun selectRepairUUIDListByPerson(username: String, requesterId: String): List<String> {
+        return database.repairs
+            .filter { (Repairs.initiator eq username) or (Repairs.principal eq username) }
+            .let {
+                if (requesterId.isBlank()) it
+                else it.filter { (it.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId) }
+            }
+            .map { it.uuid }
+    }
+
     fun assignPrincipleByUUID(uuid: String, principle: String): Int {
         return database.update(Repairs) {
             set(it.principal, principle)
