@@ -33,7 +33,10 @@ class ResponseAdvice : ResponseBodyAdvice<Any> {
         response: ServerHttpResponse
     ): Any {
         return when (body) {
-            is Result, is Map<*, *>, is String -> body
+            is Result -> body
+            is List<*> -> Result.success(object {
+                val list = body
+            })
             else -> Result.success(body)
         }
     }

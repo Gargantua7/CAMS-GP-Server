@@ -1,8 +1,6 @@
 package com.gargantua7.cams.gp.server.model.dto
 
-import com.gargantua7.cams.gp.server.config.LocalDateTimeAdapter
 import com.gargantua7.cams.gp.server.model.po.RepairEntity
-import com.google.gson.annotations.JsonAdapter
 import java.time.LocalDateTime
 import java.util.*
 
@@ -15,9 +13,7 @@ data class Repair(
     val content: String,
     val initiator: String,
     val principal: String? = null,
-    @JsonAdapter(LocalDateTimeAdapter::class)
     val initTime: LocalDateTime = LocalDateTime.now(),
-    @JsonAdapter(LocalDateTimeAdapter::class)
     val updateTime: LocalDateTime = LocalDateTime.now(),
     val state: Boolean = true,
     val private: Boolean = false

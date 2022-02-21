@@ -15,5 +15,4 @@ class Config {
 
     @Bean
     fun database(@Autowired dataSource: DataSource) = Database.connectWithSpringSupport(dataSource)
-
 }

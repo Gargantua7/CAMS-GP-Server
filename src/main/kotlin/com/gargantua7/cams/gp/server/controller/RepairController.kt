@@ -2,13 +2,10 @@ package com.gargantua7.cams.gp.server.controller
 
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
 import com.gargantua7.cams.gp.server.exception.BadRequestException
-import com.gargantua7.cams.gp.server.model.dto.Department
 import com.gargantua7.cams.gp.server.model.dto.Repair
 import com.gargantua7.cams.gp.server.model.vo.NewRepairModel
 import com.gargantua7.cams.gp.server.services.PersonService
 import com.gargantua7.cams.gp.server.services.RepairService
-import com.gargantua7.cams.gp.server.util.ListResponse
-import com.gargantua7.cams.gp.server.util.response
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.apache.shiro.authz.annotation.RequiresPermissions
@@ -58,8 +55,8 @@ class RepairController {
     }
 
     @GetMapping("/repair/uuid/list/page/{page}")
-    fun getWithPage(@PathVariable page: Int): ListResponse<String> {
-        return repairService.selectAllRepairUUIDListWithPage(page).response
+    fun getWithPage(@PathVariable page: Int): List<String> {
+        return repairService.selectAllRepairUUIDListWithPage(page)
     }
 
     @GetMapping("/repair/get/uuid/{uuid}")
@@ -78,12 +75,12 @@ class RepairController {
     @RequiresRoles("dep:1")
     @RequiresPermissions("Dep")
     @GetMapping("/repair/uuid/list/unassigned")
-    fun getUnassigned(): ListResponse<String> {
-        return repairService.selectRepairUUIDWithUnassigned().response
+    fun getUnassigned(): List<String> {
+        return repairService.selectRepairUUIDWithUnassigned()
     }
 
     @GetMapping("/repair/uuid/list/keyword/{key}")
-    fun search(@PathVariable key: String): ListResponse<String> {
-        return repairService.selectRepairUUIDListByKeyword(key).response
+    fun search(@PathVariable key: String): List<String> {
+        return repairService.selectRepairUUIDListByKeyword(key)
     }
 }

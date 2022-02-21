@@ -10,7 +10,10 @@ import com.gargantua7.cams.gp.server.model.po.Majors
 import com.gargantua7.cams.gp.server.model.po.Permissions
 import org.ktorm.database.Database
 import org.ktorm.dsl.eq
-import org.ktorm.entity.*
+import org.ktorm.entity.filter
+import org.ktorm.entity.sequenceOf
+import org.ktorm.entity.single
+import org.ktorm.entity.toList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
