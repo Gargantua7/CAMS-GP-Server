@@ -33,7 +33,7 @@ class RepairService {
     }
 
     fun selectAllRepairUUIDListWithPage(page: Int): List<String> {
-        return securityCalled(page, repairDao::selectAllRepairUUIDWithLimit, repairDao::selectAllPublicRepairUUIDWithLimit)
+        return securityCalled(page, repairDao::selectAllRepairUUIDWithLimit)
     }
 
     fun selectRepairByUUID(uuid: String): Repair {
@@ -45,7 +45,7 @@ class RepairService {
     }
 
     fun selectRepairUUIDListByKeyword(key: String): List<String> {
-        return securityCalled(key, repairDao::selectRepairUUIDListByKeyword, repairDao::selectPublicRepairUUIDListByKeyword)
+        return securityCalled(key, repairDao::selectRepairUUIDListByKeyword)
     }
 
     fun selectRepairUUIDWithUnassigned(): List<String> {
@@ -63,10 +63,10 @@ class RepairService {
             throw NotFoundException("Repair[$uuid] Not Found")
     }
 
-    fun <P, R> securityCalled(param: P, all: (P) -> R, public: (P, String) -> R): R {
+    fun <P, R> securityCalled(param: P, action: (P, String) -> R): R {
         val subject = SecurityUtils.getSubject()
         return if (subject.hasRole("dep:1") && subject.isPermitted("Dep"))
-            all(param)
-        else public(param, (subject.principal as String?) ?: "")
+            action(param, "")
+        else action(param, (subject.principal as String?) ?: "-1")
     }
 }
