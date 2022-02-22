@@ -46,8 +46,8 @@ class RepairService {
         )
     }
 
-    fun selectAllRepairUUIDListWithPage(page: Int): List<String> {
-        return securityCalled(page, repairDao::selectAllRepairUUIDWithLimit)
+    fun selectAllRepairUUIDList(): List<String> {
+        return securityCalled(Unit, repairDao::selectAllRepairUUID)
     }
 
     fun selectRepairByUUID(uuid: String): Repair {

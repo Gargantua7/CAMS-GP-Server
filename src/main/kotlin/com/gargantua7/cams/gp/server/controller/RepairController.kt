@@ -60,9 +60,9 @@ class RepairController {
         repairService.changeStateByUUIDWithAuth(uuid, state == "open", SecurityUtils.getSubject().principal as String)
     }
 
-    @GetMapping("/repair/uuid/list/page/{page}")
-    fun getWithPage(@PathVariable page: Int): List<String> {
-        return repairService.selectAllRepairUUIDListWithPage(page)
+    @GetMapping("/repair/uuid/list")
+    fun getAll(): List<String> {
+        return repairService.selectAllRepairUUIDList()
     }
 
     @GetMapping("/repair/get/uuid/{uuid}")

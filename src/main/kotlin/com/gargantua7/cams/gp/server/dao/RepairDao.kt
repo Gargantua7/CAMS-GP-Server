@@ -23,14 +23,14 @@ class RepairDao {
         return database.repairs.add(repair.entity)
     }
 
-    fun selectAllRepairUUIDWithLimit(page: Int, requesterId: String = ""): List<String> {
+    fun selectAllRepairUUID(stub: Unit, requesterId: String = ""): List<String> {
         return database
             .from(Repairs)
             .select()
             .let {
                 if (requesterId.isBlank()) it
                 else it.where { (Repairs.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId) }
-            }.limit(page, 10)
+            }
             .orderBy(Repairs.updateTime.desc())
             .map { row -> row[Repairs.uuid]!! }
     }
