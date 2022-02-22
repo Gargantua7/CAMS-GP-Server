@@ -83,9 +83,18 @@ class RepairService {
         )
     }
 
+    fun permissionCheck(uuid: String): Boolean {
+        val subject = SecurityUtils.getSubject()
+        if (subject.hasRole("dep:1") && subject.isPermitted("Dep")) return false
+        return permissionCheck(repairDao.selectRepairByUUID(uuid))
+    }
+
     fun permissionCheck(repair: Repair): Boolean {
         val subject = SecurityUtils.getSubject()
-        return !repair.private || ((subject.principal as String? ?: return false) in arrayOf(repair.initiator, repair.principal)) ||
-                subject.hasRole("dep:1") && subject.isPermitted("Dep")
+        if (subject.hasRole("dep:1") && subject.isPermitted("Dep")) return false
+        return !repair.private || ((subject.principal as String? ?: return false) in arrayOf(
+            repair.initiator,
+            repair.principal
+        ))
     }
 }
