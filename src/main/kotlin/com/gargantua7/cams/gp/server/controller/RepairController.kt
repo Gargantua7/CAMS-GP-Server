@@ -111,4 +111,9 @@ class RepairController {
         )
         replyService.insertNewReply(reply)
     }
+
+    @GetMapping("/repair/{uuid}/reply/list")
+    fun getReplyListWithRepairUUID(@PathVariable uuid: String): List<String> {
+        return replyService.selectReplyUUIDListByRepairUUID(uuid)
+    }
 }
