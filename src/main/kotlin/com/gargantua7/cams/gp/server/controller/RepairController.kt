@@ -57,7 +57,7 @@ class RepairController {
     @PostMapping("/repair/{uuid}/state/change/{state}")
     fun changeState(@PathVariable uuid: String, @PathVariable state: String) {
         if (state !in arrayOf("open", "close")) throw BadRequestException("Wrong Request Parma")
-        repairService.changeStateByUUIDWithAuth(uuid, state == "open", SecurityUtils.getSubject().principal as String)
+        repairService.changeStateByUUIDWithAuth(uuid, state == "open")
     }
 
     @GetMapping("/repair/uuid/list")

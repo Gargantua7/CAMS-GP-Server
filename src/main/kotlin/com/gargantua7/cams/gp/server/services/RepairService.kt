@@ -1,6 +1,5 @@
 package com.gargantua7.cams.gp.server.services
 
-import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.dao.RepairDao
 import com.gargantua7.cams.gp.server.dao.ReplyDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
@@ -21,9 +20,6 @@ class RepairService {
 
     @Autowired
     private lateinit var replyDao: ReplyDao
-
-    @Autowired
-    private lateinit var personDao: PersonDao
 
     @Autowired
     private lateinit var repairDao: RepairDao
@@ -47,7 +43,7 @@ class RepairService {
     }
 
     fun selectAllRepairUUIDList(): List<String> {
-        return securityCalled(Unit, repairDao::selectAllRepairUUID)
+        return repairDao.selectAllRepairUUID()
     }
 
     fun selectRepairByUUID(uuid: String): Repair {
@@ -59,41 +55,37 @@ class RepairService {
     }
 
     fun selectRepairUUIDListByKeyword(key: String): List<String> {
-        return securityCalled(key, repairDao::selectRepairUUIDListByKeyword)
+        return repairDao.selectRepairUUIDListByKeyword(key)
     }
 
     fun selectRepairUUIDListByPerson(person: String): List<String> {
-        return securityCalled(person, repairDao::selectRepairUUIDListByPerson)
+        return repairDao.selectRepairUUIDListByPerson(person)
     }
 
     fun selectRepairUUIDWithUnassigned(): List<String> {
         return repairDao.selectRepairUUIDWithUnassigned()
     }
 
-    fun changeStateByUUIDWithAuth(uuid: String, state: Boolean, requesterId: String) {
-        val requester = personDao.selectPersonByUsername(requesterId)
-        if (requester.depId != 1 || requester.permissionLevel < 3) {
-            val repair = selectRepairByUUID(uuid)
-            if (requesterId != repair.initiator && requesterId != repair.principal)
-                throw AuthorizedException.InsufficientPermissionsException()
-        }
+    fun changeStateByUUIDWithAuth(uuid: String, state: Boolean) {
         val repair = repairDao.selectRepairByUUID(uuid)
+        if (!permissionCheck(repair)) {
+            throw AuthorizedException.InsufficientPermissionsException()
+        }
         if (repair.state == state) return
         repairDao.changeStateByUUID(uuid, state)
         replyDao.insertNewReply(
             Reply(
                 repair = uuid,
-                sender = requesterId,
+                sender = SecurityUtils.getSubject().principal as String,
                 type = 1,
                 content = state.toString()
             )
         )
     }
 
-    fun <P, R> securityCalled(param: P, action: (P, String) -> R): R {
+    fun permissionCheck(repair: Repair): Boolean {
         val subject = SecurityUtils.getSubject()
-        return if (subject.hasRole("dep:1") && subject.isPermitted("Dep"))
-            action(param, "")
-        else action(param, (subject.principal as String?) ?: "-1")
+        return !repair.private || ((subject.principal as String) in arrayOf(repair.initiator, repair.principal)) ||
+                subject.hasRole("dep:1") && subject.isPermitted("Dep")
     }
 }

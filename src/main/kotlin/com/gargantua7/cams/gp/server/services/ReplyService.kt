@@ -17,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional
 class ReplyService {
 
     @Autowired
+    private lateinit var repairService: RepairService
+
+    @Autowired
     private lateinit var repairDao: RepairDao
 
     @Autowired
@@ -24,11 +27,8 @@ class ReplyService {
 
     fun insertNewReply(reply: Reply) {
         val repair = repairDao.selectRepairByUUID(reply.repair)
-        if (repair.private && (reply.sender !in arrayOf(repair.initiator, repair.principal))) {
-            val subject = SecurityUtils.getSubject()
-            if (!(subject.hasRole("dep:1") && subject.isPermitted("Dep"))) {
-                throw AuthorizedException.InsufficientPermissionsException()
-            }
+        if (!repairService.permissionCheck(repair)) {
+            throw AuthorizedException.InsufficientPermissionsException()
         }
         replyDao.insertNewReply(reply)
     }

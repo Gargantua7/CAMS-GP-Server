@@ -2,6 +2,7 @@ package com.gargantua7.cams.gp.server.dao
 
 import com.gargantua7.cams.gp.server.model.dto.Repair
 import com.gargantua7.cams.gp.server.model.po.Repairs
+import org.apache.shiro.SecurityUtils
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.*
@@ -23,13 +24,16 @@ class RepairDao {
         return database.repairs.add(repair.entity)
     }
 
-    fun selectAllRepairUUID(stub: Unit, requesterId: String = ""): List<String> {
+    fun selectAllRepairUUID(): List<String> {
         return database
             .from(Repairs)
             .select()
             .let {
-                if (requesterId.isBlank()) it
-                else it.where { (Repairs.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId) }
+                if (checkPermission()) it
+                else it.where {
+                    val requesterId = SecurityUtils.getSubject().principal as String? ?: ""
+                    (Repairs.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId)
+                }
             }
             .orderBy(Repairs.updateTime.desc())
             .map { row -> row[Repairs.uuid]!! }
@@ -39,12 +43,15 @@ class RepairDao {
         return database.repairs.filter { it.uuid eq uuid }.single().value
     }
 
-    fun selectRepairUUIDListByKeyword(key: String, requesterId: String): List<String> {
+    fun selectRepairUUIDListByKeyword(key: String): List<String> {
         return database.repairs
             .filter { (it.title like "%$key%") or (it.content like "%$key%") }
-            .let {
-                if (requesterId.isBlank()) it
-                else it.filter { (it.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId) }
+            .let { it ->
+                if (checkPermission()) it
+                else it.filter {
+                    val requesterId = SecurityUtils.getSubject().principal as String? ?: ""
+                    (it.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId)
+                }
             }.map { it.uuid }
     }
 
@@ -52,12 +59,15 @@ class RepairDao {
         return database.repairs.filter { it.principal.isNull() }.map { it.uuid }
     }
 
-    fun selectRepairUUIDListByPerson(username: String, requesterId: String): List<String> {
+    fun selectRepairUUIDListByPerson(username: String): List<String> {
         return database.repairs
             .filter { (Repairs.initiator eq username) or (Repairs.principal eq username) }
-            .let {
-                if (requesterId.isBlank()) it
-                else it.filter { (it.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId) }
+            .let { it ->
+                if (checkPermission()) it
+                else it.filter {
+                    val requesterId = SecurityUtils.getSubject().principal as String? ?: ""
+                    (it.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId)
+                }
             }
             .map { it.uuid }
     }
@@ -74,5 +84,10 @@ class RepairDao {
             set(it.state, state)
             where { it.uuid eq uuid }
         }
+    }
+
+    private fun checkPermission(): Boolean {
+        val subject = SecurityUtils.getSubject()
+        return subject.hasRole("dep:1") && subject.isPermitted("Dep")
     }
 }
