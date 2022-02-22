@@ -3,9 +3,12 @@ package com.gargantua7.cams.gp.server.controller
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
 import com.gargantua7.cams.gp.server.exception.BadRequestException
 import com.gargantua7.cams.gp.server.model.dto.Repair
+import com.gargantua7.cams.gp.server.model.dto.Reply
 import com.gargantua7.cams.gp.server.model.vo.NewRepairModel
+import com.gargantua7.cams.gp.server.model.vo.NewRepairReplyModel
 import com.gargantua7.cams.gp.server.services.PersonService
 import com.gargantua7.cams.gp.server.services.RepairService
+import com.gargantua7.cams.gp.server.services.ReplyService
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.apache.shiro.authz.annotation.RequiresPermissions
@@ -19,6 +22,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(produces = ["application/json;charset=UTF-8"])
 class RepairController {
+
+    @Autowired
+    private lateinit var replyService: ReplyService
 
     @Autowired
     private lateinit var personService: PersonService
@@ -88,5 +94,21 @@ class RepairController {
     @GetMapping("/repair/uuid/list/keyword/{key}")
     fun search(@PathVariable key: String): List<String> {
         return repairService.selectRepairUUIDListByKeyword(key)
+    }
+
+
+    // -------- Repair Reply -------------
+
+    @RequiresAuthentication
+    @PostMapping("/repair/{uuid}/reply/add")
+    fun addReply(@PathVariable uuid: String, @RequestBody model: NewRepairReplyModel) {
+        if (model.content.isBlank())
+            throw BadRequestException("Wrong Request Param Format: Content Must Not Empty Or Blank")
+        val reply = Reply(
+            repair = uuid,
+            sender = SecurityUtils.getSubject().principal as String,
+            content = model.content
+        )
+        replyService.insertNewReply(reply)
     }
 }
