@@ -74,7 +74,7 @@ class RepairController {
         if (requestId == repair.initiator || requestId == repair.principal) return repair
         val requester = personService.selectPersonByUsername(requestId)
         if (requester.permissionLevel > 3 && requester.depId == 1) return repair
-        throw AuthorizedException("Insufficient Permissions")
+        throw AuthorizedException.InsufficientPermissionsException()
     }
 
 
@@ -103,7 +103,7 @@ class RepairController {
     @PostMapping("/repair/{uuid}/reply/add")
     fun addReply(@PathVariable uuid: String, @RequestBody model: NewRepairReplyModel) {
         if (model.content.isBlank())
-            throw BadRequestException("Wrong Request Param Format: Content Must Not Empty Or Blank")
+            throw BadRequestException.RequestParamFormatException("Content Must Not Empty Or Blank")
         val reply = Reply(
             repair = uuid,
             sender = SecurityUtils.getSubject().principal as String,

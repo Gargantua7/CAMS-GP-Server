@@ -12,6 +12,6 @@ data class NewRepairModel(
 ) {
     fun require() {
         if (title.length !in 1..20)
-            throw BadRequestException("Title Too Long Or Too Short")
+            throw BadRequestException.RequestParamFormatException("Title Too Long Or Too Short")
     }
 }

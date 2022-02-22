@@ -17,7 +17,7 @@ data class PersonInfoUpdateModel(
 ) {
     fun require() {
         if (!matchUsername(username) || !matchPhone(phone) || !matchWechat(wechat)) {
-            throw BadRequestException("Wrong Request Param Format")
+            throw BadRequestException.RequestParamFormatException("Wrong Request Param Format")
         }
     }
 }

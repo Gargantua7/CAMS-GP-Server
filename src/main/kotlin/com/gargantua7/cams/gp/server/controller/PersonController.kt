@@ -60,7 +60,7 @@ class PersonController {
         if (requesterId != model.username) {
             val requester = personService.selectPersonByUsername(requesterId)
             if (requester.permissionLevel <= updated.permissionLevel)
-                throw AuthorizedException("Insufficient Permissions")
+                throw AuthorizedException.InsufficientPermissionsException()
         }
         val person = Person(
             updated.username,

@@ -9,6 +9,6 @@ import com.gargantua7.cams.gp.server.matchPassword
 data class PasswordUpdateModel(val old: String, val new: String) {
     fun match() {
         if (!matchPassword(new))
-            throw BadRequestException("Wrong Password Format")
+            throw BadRequestException.RequestParamFormatException("Wrong Password Format")
     }
 }

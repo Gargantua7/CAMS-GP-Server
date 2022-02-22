@@ -45,7 +45,7 @@ class ExceptionHandler {
     @ExceptionHandler(UnauthorizedException::class)
     fun unauthorizedExceptionHandler(httpServletRequest: HttpServletRequest, e: UnauthorizedException): Failure {
         logger.warn("[${httpServletRequest.requestURI}] ${e.message}")
-        return Result.failure(AuthorizedException("Insufficient Permissions", e))
+        return Result.failure(AuthorizedException.InsufficientPermissionsException(e))
     }
 
     @ExceptionHandler(UnauthenticatedException::class)

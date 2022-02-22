@@ -1,6 +1,5 @@
 package com.gargantua7.cams.gp.server.services
 
-import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.dao.RepairDao
 import com.gargantua7.cams.gp.server.dao.ReplyDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
@@ -28,7 +27,7 @@ class ReplyService {
         if (repair.private && (reply.sender !in arrayOf(repair.initiator, repair.principal))) {
             val subject = SecurityUtils.getSubject()
             if (!(subject.hasRole("dep:1") && subject.isPermitted("Dep"))) {
-                throw AuthorizedException("Insufficient Permissions")
+                throw AuthorizedException.InsufficientPermissionsException()
             }
         }
         replyDao.insertNewReply(reply)

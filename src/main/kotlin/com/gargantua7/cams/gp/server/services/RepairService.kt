@@ -61,7 +61,7 @@ class RepairService {
         if (requester.depId != 1 || requester.permissionLevel < 3) {
             val repair = selectRepairByUUID(uuid)
             if (requesterId != repair.initiator && requesterId != repair.principal)
-                throw AuthorizedException("Insufficient Permissions")
+                throw AuthorizedException.InsufficientPermissionsException()
         }
         if (repairDao.changeStateByUUID(uuid, state) != 1)
             throw NotFoundException("Repair[$uuid] Not Found")

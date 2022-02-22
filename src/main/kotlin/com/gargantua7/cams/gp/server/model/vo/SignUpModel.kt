@@ -20,7 +20,7 @@ data class SignUpModel(
 
     fun require() {
         if (!matchUsername(username) || !matchPassword(password) || !matchPhone(phone) || !matchWechat(wechat)) {
-                throw BadRequestException("Wrong Request Param Format")
+                throw BadRequestException.RequestParamFormatException("Wrong Request Param Format")
         }
     }
 
