@@ -85,7 +85,7 @@ class RepairService {
 
     fun permissionCheck(repair: Repair): Boolean {
         val subject = SecurityUtils.getSubject()
-        return !repair.private || ((subject.principal as String) in arrayOf(repair.initiator, repair.principal)) ||
+        return !repair.private || ((subject.principal as String? ?: return false) in arrayOf(repair.initiator, repair.principal)) ||
                 subject.hasRole("dep:1") && subject.isPermitted("Dep")
     }
 }
