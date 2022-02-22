@@ -78,7 +78,7 @@ class RepairService {
                 repair = uuid,
                 sender = SecurityUtils.getSubject().principal as String,
                 type = 1,
-                content = state.toString()
+                content = if (state) "Open" else "Close"
             )
         )
     }
