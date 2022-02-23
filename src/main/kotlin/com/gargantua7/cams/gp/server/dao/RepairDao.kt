@@ -8,6 +8,7 @@ import org.ktorm.dsl.*
 import org.ktorm.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 /**
  * @author Gargantua7
@@ -82,6 +83,13 @@ class RepairDao {
     fun changeStateByID(id: Long, state: Boolean): Int {
         return database.update(Repairs) {
             set(it.state, state)
+            where { it.id eq id }
+        }
+    }
+
+    fun refreshUpdateTime(id: Long): Int {
+        return database.update(Repairs) {
+            set(it.updateTime, LocalDateTime.now())
             where { it.id eq id }
         }
     }

@@ -85,13 +85,13 @@ class RepairService {
 
     fun permissionCheck(id: Long): Boolean {
         val subject = SecurityUtils.getSubject()
-        if (subject.hasRole("dep:1") && subject.isPermitted("Dep")) return false
+        if (subject.hasRole("dep:1") && subject.isPermitted("Dep")) return true
         return permissionCheck(repairDao.selectRepairByID(id))
     }
 
     fun permissionCheck(repair: Repair): Boolean {
         val subject = SecurityUtils.getSubject()
-        if (subject.hasRole("dep:1") && subject.isPermitted("Dep")) return false
+        if (subject.hasRole("dep:1") && subject.isPermitted("Dep")) return true
         return !repair.private || ((subject.principal as String? ?: return false) in arrayOf(
             repair.initiator,
             repair.principal

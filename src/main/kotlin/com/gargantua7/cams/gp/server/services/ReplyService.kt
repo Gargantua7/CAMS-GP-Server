@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.server.services
 
+import com.gargantua7.cams.gp.server.dao.RepairDao
 import com.gargantua7.cams.gp.server.dao.ReplyDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
 import com.gargantua7.cams.gp.server.model.dto.Reply
@@ -15,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional
 class ReplyService {
 
     @Autowired
+    private lateinit var repairDao: RepairDao
+
+    @Autowired
     private lateinit var repairService: RepairService
 
     @Autowired
@@ -25,6 +29,7 @@ class ReplyService {
             throw AuthorizedException.InsufficientPermissionsException()
         }
         replyDao.insertNewReply(reply)
+        repairDao.refreshUpdateTime(reply.repair)
     }
 
     fun selectReplyIDListByRepairUUID(repairID: Long): List<Long> {
