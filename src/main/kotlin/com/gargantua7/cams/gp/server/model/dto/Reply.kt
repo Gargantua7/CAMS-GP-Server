@@ -1,22 +1,22 @@
 package com.gargantua7.cams.gp.server.model.dto
 
 import com.gargantua7.cams.gp.server.model.po.ReplyEntity
+import com.gargantua7.cams.gp.server.util.Snowflake
 import java.time.LocalDateTime
-import java.util.*
 
 /**
  * @author Gargantua7
  */
 data class Reply(
-    val uuid: String = UUID.randomUUID().toString().replace("-", ""),
-    val repair: String,
+    val uuid: Long = Snowflake.instance.nextId(),
+    val repair: Long,
     val sender: String,
     val type: Int = 0,
     val content: String,
     val time: LocalDateTime = LocalDateTime.now()
 ) {
     constructor(that: ReplyEntity) : this(
-        that.uuid,
+        that.id,
         that.repair,
         that.sender,
         that.type,
@@ -26,7 +26,7 @@ data class Reply(
 
     val entity
         get() = ReplyEntity {
-            this.uuid = this@Reply.uuid
+            this.id = this@Reply.uuid
             this.repair = this@Reply.repair
             this.sender = this@Reply.sender
             this.type = this@Reply.type

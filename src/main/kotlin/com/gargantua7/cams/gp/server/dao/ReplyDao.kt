@@ -23,12 +23,12 @@ class ReplyDao {
         return database.replies.add(reply.entity)
     }
 
-    fun selectReplyUUIDListByRepairUUID(repairUUID: String): List<String> {
-        return database.replies.filter { it.repair eq repairUUID }.map { it.uuid }
+    fun selectReplyIDListByRepairID(repairID: Long): List<Long> {
+        return database.replies.filter { it.repair eq repairID }.map { it.id }
     }
 
-    fun selectReplyByUUID(uuid: String): Reply {
-        return database.replies.filter { it.uuid eq uuid }.single().value
+    fun selectReplyByID(id: Long): Reply {
+        return database.replies.filter { it.id eq id }.single().value
     }
 
 }

@@ -27,15 +27,15 @@ class ReplyService {
         replyDao.insertNewReply(reply)
     }
 
-    fun selectReplyUUIDListByRepairUUID(repairUUID: String): List<String> {
-        if (!repairService.permissionCheck(repairUUID)) {
+    fun selectReplyIDListByRepairUUID(repairID: Long): List<Long> {
+        if (!repairService.permissionCheck(repairID)) {
             throw AuthorizedException.InsufficientPermissionsException()
         }
-        return replyDao.selectReplyUUIDListByRepairUUID(repairUUID)
+        return replyDao.selectReplyIDListByRepairID(repairID)
     }
 
-    fun selectReplyByUUID(uuid: String): Reply {
-        val reply = replyDao.selectReplyByUUID(uuid)
+    fun selectReplyByID(id: Long): Reply {
+        val reply = replyDao.selectReplyByID(id)
         if (!repairService.permissionCheck(reply.repair)) {
             throw AuthorizedException.InsufficientPermissionsException()
         }

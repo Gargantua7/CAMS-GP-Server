@@ -9,7 +9,7 @@ import java.time.LocalDateTime
  * @author Gargantua7
  */
 object Repairs: Table<RepairEntity>("repair") {
-    val uuid = varchar("uuid").primaryKey().bindTo { it.uuid }
+    val id = long("id").primaryKey().bindTo { it.id }
     val title = varchar("title").bindTo { it.title }
     val content = text("content").bindTo { it.content }
     val initiator = varchar("initiator").bindTo { it.initiator }
@@ -24,7 +24,7 @@ interface RepairEntity: Entity<RepairEntity> {
 
     companion object : Entity.Factory<RepairEntity>()
 
-    var uuid: String
+    var id: Long
     var title: String
     var content: String
     var initiator: String

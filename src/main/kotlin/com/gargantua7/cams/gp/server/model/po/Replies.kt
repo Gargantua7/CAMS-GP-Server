@@ -9,8 +9,8 @@ import java.time.LocalDateTime
  * @author Gargantua7
  */
 object Replies : Table<ReplyEntity>("repair_reply") {
-    val uuid = varchar("uuid").primaryKey().bindTo { it.uuid }
-    val repair = varchar("repair").bindTo { it.repair }
+    val id = long("id").primaryKey().bindTo { it.id }
+    val repair = long("repair").bindTo { it.repair }
     val sender = varchar("sender").bindTo { it.sender }
     val type = int("type").bindTo { it.type }
     val content = text("content").bindTo { it.content }
@@ -21,8 +21,8 @@ interface ReplyEntity: Entity<ReplyEntity> {
 
     companion object : Entity.Factory<ReplyEntity>()
 
-    var uuid: String
-    var repair: String
+    var id: Long
+    var repair: Long
     var sender: String
     var type: Int
     var content: String

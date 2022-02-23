@@ -24,7 +24,7 @@ class RepairDao {
         return database.repairs.add(repair.entity)
     }
 
-    fun selectAllRepairUUID(): List<String> {
+    fun selectAllRepairID(): List<Long> {
         return database
             .from(Repairs)
             .select()
@@ -36,14 +36,14 @@ class RepairDao {
                 }
             }
             .orderBy(Repairs.updateTime.desc())
-            .map { row -> row[Repairs.uuid]!! }
+            .map { row -> row[Repairs.id]!! }
     }
 
-    fun selectRepairByUUID(uuid: String): Repair {
-        return database.repairs.filter { it.uuid eq uuid }.single().value
+    fun selectRepairByID(id: Long): Repair {
+        return database.repairs.filter { it.id eq id }.single().value
     }
 
-    fun selectRepairUUIDListByKeyword(key: String): List<String> {
+    fun selectRepairIDListByKeyword(key: String): List<Long> {
         return database.repairs
             .filter { (it.title like "%$key%") or (it.content like "%$key%") }
             .let { it ->
@@ -52,14 +52,14 @@ class RepairDao {
                     val requesterId = SecurityUtils.getSubject().principal as String? ?: ""
                     (it.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId)
                 }
-            }.map { it.uuid }
+            }.map { it.id }
     }
 
-    fun selectRepairUUIDWithUnassigned(): List<String> {
-        return database.repairs.filter { it.principal.isNull() }.map { it.uuid }
+    fun selectRepairIDWithUnassigned(): List<Long> {
+        return database.repairs.filter { it.principal.isNull() }.map { it.id }
     }
 
-    fun selectRepairUUIDListByPerson(username: String): List<String> {
+    fun selectRepairIDListByPerson(username: String): List<Long> {
         return database.repairs
             .filter { (Repairs.initiator eq username) or (Repairs.principal eq username) }
             .let { it ->
@@ -69,20 +69,20 @@ class RepairDao {
                     (it.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId)
                 }
             }
-            .map { it.uuid }
+            .map { it.id }
     }
 
-    fun assignPrincipleByUUID(uuid: String, principle: String): Int {
+    fun assignPrincipleByID(id: Long, principle: String): Int {
         return database.update(Repairs) {
             set(it.principal, principle)
-            where { it.uuid eq uuid }
+            where { it.id eq id }
         }
     }
 
-    fun changeStateByUUID(uuid: String, state: Boolean): Int {
+    fun changeStateByID(id: Long, state: Boolean): Int {
         return database.update(Repairs) {
             set(it.state, state)
-            where { it.uuid eq uuid }
+            where { it.id eq id }
         }
     }
 

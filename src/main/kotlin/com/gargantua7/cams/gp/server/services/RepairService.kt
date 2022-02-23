@@ -28,13 +28,13 @@ class RepairService {
         repairDao.insert(repair)
     }
 
-    fun assignPrincipleByUUID(uuid: String, principle: String) {
-        val repair = repairDao.selectRepairByUUID(uuid)
+    fun assignPrincipleByID(id: Long, principle: String) {
+        val repair = repairDao.selectRepairByID(id)
         if (repair.principal == principle) return
-        repairDao.assignPrincipleByUUID(uuid, principle)
+        repairDao.assignPrincipleByID(id, principle)
         replyDao.insertNewReply(
             Reply(
-                repair = uuid,
+                repair = id,
                 sender = SecurityUtils.getSubject().principal as String,
                 type = 2,
                 content = principle
@@ -42,40 +42,40 @@ class RepairService {
         )
     }
 
-    fun selectAllRepairUUIDList(): List<String> {
-        return repairDao.selectAllRepairUUID()
+    fun selectAllRepairIDList(): List<Long> {
+        return repairDao.selectAllRepairID()
     }
 
-    fun selectRepairByUUID(uuid: String): Repair {
+    fun selectRepairByID(id: Long): Repair {
         try {
-            return repairDao.selectRepairByUUID(uuid)
+            return repairDao.selectRepairByID(id)
         } catch (e: NoSuchElementException) {
-            throw NotFoundException("Repair[$uuid] Not Found", e)
+            throw NotFoundException("Repair[$id] Not Found", e)
         }
     }
 
-    fun selectRepairUUIDListByKeyword(key: String): List<String> {
-        return repairDao.selectRepairUUIDListByKeyword(key)
+    fun selectRepairIDListByKeyword(key: String): List<Long> {
+        return repairDao.selectRepairIDListByKeyword(key)
     }
 
-    fun selectRepairUUIDListByPerson(person: String): List<String> {
-        return repairDao.selectRepairUUIDListByPerson(person)
+    fun selectRepairIDListByPerson(person: String): List<Long> {
+        return repairDao.selectRepairIDListByPerson(person)
     }
 
-    fun selectRepairUUIDWithUnassigned(): List<String> {
-        return repairDao.selectRepairUUIDWithUnassigned()
+    fun selectRepairIDWithUnassigned(): List<Long> {
+        return repairDao.selectRepairIDWithUnassigned()
     }
 
-    fun changeStateByUUIDWithAuth(uuid: String, state: Boolean) {
-        val repair = repairDao.selectRepairByUUID(uuid)
+    fun changeStateByIDWithAuth(id: Long, state: Boolean) {
+        val repair = repairDao.selectRepairByID(id)
         if (!permissionCheck(repair)) {
             throw AuthorizedException.InsufficientPermissionsException()
         }
         if (repair.state == state) return
-        repairDao.changeStateByUUID(uuid, state)
+        repairDao.changeStateByID(id, state)
         replyDao.insertNewReply(
             Reply(
-                repair = uuid,
+                repair = id,
                 sender = SecurityUtils.getSubject().principal as String,
                 type = 1,
                 content = if (state) "Open" else "Close"
@@ -83,10 +83,10 @@ class RepairService {
         )
     }
 
-    fun permissionCheck(uuid: String): Boolean {
+    fun permissionCheck(id: Long): Boolean {
         val subject = SecurityUtils.getSubject()
         if (subject.hasRole("dep:1") && subject.isPermitted("Dep")) return false
-        return permissionCheck(repairDao.selectRepairByUUID(uuid))
+        return permissionCheck(repairDao.selectRepairByID(id))
     }
 
     fun permissionCheck(repair: Repair): Boolean {

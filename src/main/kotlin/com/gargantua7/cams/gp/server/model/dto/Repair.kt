@@ -1,14 +1,14 @@
 package com.gargantua7.cams.gp.server.model.dto
 
 import com.gargantua7.cams.gp.server.model.po.RepairEntity
+import com.gargantua7.cams.gp.server.util.Snowflake
 import java.time.LocalDateTime
-import java.util.*
 
 /**
  * @author Gargantua7
  */
 data class Repair(
-    val uuid: String = UUID.randomUUID().toString().replace("-", ""),
+    val id: Long = Snowflake.instance.nextId(),
     val title: String,
     val content: String,
     val initiator: String,
@@ -19,7 +19,7 @@ data class Repair(
     val private: Boolean = false
 ) {
     constructor(that: RepairEntity) : this(
-        that.uuid,
+        that.id,
         that.title,
         that.content,
         that.initiator,
@@ -32,7 +32,7 @@ data class Repair(
 
     val entity
         get() = RepairEntity {
-            uuid = this@Repair.uuid
+            id = this@Repair.id
             title = this@Repair.title
             content = this@Repair.content
             initiator = this@Repair.initiator
