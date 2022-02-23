@@ -66,6 +66,12 @@ class ExceptionHandler {
         return Result.failure(NotFoundException("Resource Not Found", e))
     }
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun illegalArgumentException(httpServletRequest: HttpServletRequest, e: IllegalArgumentException): Failure {
+        logger.error("[${httpServletRequest.requestURI}] Illegal Argument Exception : ${e.message}")
+        return Failure(500, "Internal Server Error", "IllegalArgumentException")
+    }
+
     @ExceptionHandler(Exception::class)
     fun exceptionHandler(httpServletRequest: HttpServletRequest, e: Exception): Failure {
         logger.error("[${httpServletRequest.requestURI}] Unknown Exception : ${e.message}", e)
