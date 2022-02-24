@@ -29,13 +29,13 @@ data class Event(
     )
 
     val entity get() = EventEntity {
-        this.id = this@Event.id
-        this.name = this@Event.name
-        this.content = this@Event.content
-        this.number = this@Event.number
-        this.location = this@Event.location
-        this.eventTime = this@Event.eventTime
-        this.startTime = this@Event.startTime
-        this.endTime = this@Event.endTime
+        id = this@Event.id
+        name = this@Event.name
+        content = this@Event.content
+        number = this@Event.number
+        location = this@Event.location
+        eventTime = this@Event.eventTime
+        startTime = this@Event.startTime
+        endTime = this@Event.endTime
     }
 }

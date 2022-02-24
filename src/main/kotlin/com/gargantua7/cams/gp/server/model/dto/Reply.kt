@@ -26,11 +26,11 @@ data class Reply(
 
     val entity
         get() = ReplyEntity {
-            this.id = this@Reply.uuid
-            this.repair = this@Reply.repair
-            this.sender = this@Reply.sender
-            this.type = this@Reply.type
-            this.content = this@Reply.content
-            this.time = this@Reply.time
+            id = this@Reply.uuid
+            repair = this@Reply.repair
+            sender = this@Reply.sender
+            type = this@Reply.type
+            content = this@Reply.content
+            time = this@Reply.time
         }
 }
