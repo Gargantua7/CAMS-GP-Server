@@ -8,6 +8,7 @@ import com.gargantua7.cams.gp.server.model.po.PersonEntity
 data class Person(
     val username: String,
     val name: String,
+    val sex: Boolean,
     val majorId: String,
     val depId: Int,
     val permissionLevel: Int,
@@ -17,6 +18,7 @@ data class Person(
     constructor(that: PersonEntity) : this(
         that.username,
         that.name,
+        that.sex,
         that.majorId,
         that.depId,
         that.permissionLevel,
@@ -28,6 +30,7 @@ data class Person(
         get() = PersonEntity {
             username = this@Person.username
             name = this@Person.name
+            sex = this@Person.sex
             majorId = this@Person.majorId
             depId = this@Person.depId
             permissionLevel = this@Person.permissionLevel

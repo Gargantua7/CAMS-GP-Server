@@ -3,6 +3,7 @@ package com.gargantua7.cams.gp.server.model.po
 import com.gargantua7.cams.gp.server.model.dto.Person
 import org.ktorm.entity.Entity
 import org.ktorm.schema.Table
+import org.ktorm.schema.boolean
 import org.ktorm.schema.int
 import org.ktorm.schema.varchar
 
@@ -13,6 +14,7 @@ object Persons : Table<PersonEntity>("person") {
 
     val username = varchar("username").primaryKey().bindTo { it.username }
     val name = varchar("name").bindTo { it.name }
+    val sex = boolean("sex").bindTo { it.sex }
     val majorId = varchar("major_id").bindTo { it.majorId }
     val depId = int("dep_id").bindTo { it.depId }
     val permissionLevel = int("permission_level").bindTo { it.permissionLevel }
@@ -27,6 +29,7 @@ interface PersonEntity : Entity<PersonEntity> {
 
     var username: String
     var name: String
+    var sex: Boolean
     var majorId: String
     var depId: Int
     var permissionLevel: Int

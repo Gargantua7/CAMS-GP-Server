@@ -65,6 +65,7 @@ class PersonController {
         val person = Person(
             updated.username,
             model.name ?: updated.name,
+            updated.sex,
             model.majorId ?: updated.majorId,
             updated.depId,
             updated.permissionLevel,

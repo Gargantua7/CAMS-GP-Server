@@ -41,7 +41,7 @@ class SecretController {
     @PostMapping("/secret/sign/up")
     fun signUp(@RequestBody info: SignUpModel) {
         info.require()
-        val person = Person(info.username, info.name, info.majorId, 5, -1, info.phone, info.wechat)
+        val person = Person(info.username, info.name, info.sex, info.majorId, 5, -1, info.phone, info.wechat)
         val salt = Random().nextInt()
         val secret = Secret(info.username, Sha256Hash(info.password, salt.toString(), 10).toString(), salt)
         secretService.insertSignUpPerson(person, secret)

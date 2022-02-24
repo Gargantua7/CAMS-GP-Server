@@ -8,6 +8,7 @@ import com.gargantua7.cams.gp.server.model.vo.FullPersonModel
 data class FullPerson(
     val username: String,
     val name: String,
+    val sex: Boolean,
     val major: String,
     val collage: String,
     val majorId: String,

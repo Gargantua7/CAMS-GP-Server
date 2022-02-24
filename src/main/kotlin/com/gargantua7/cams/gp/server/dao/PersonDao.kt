@@ -63,6 +63,7 @@ class PersonDao {
             FullPerson(
                 username = row[Persons.username]!!,
                 name = row[Persons.name]!!,
+                sex = row[Persons.sex]!!,
                 major = row[Majors.name]!!,
                 collage = row[Collages.name]!!,
                 majorId = row[Persons.majorId]!!,

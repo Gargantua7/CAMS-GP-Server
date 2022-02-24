@@ -8,6 +8,7 @@ import com.gargantua7.cams.gp.server.model.dto.FullPerson
 data class FullPersonModel(
     val username: String,
     val name: String,
+    val sex: Boolean,
     val major: String,
     val collage: String,
     val majorId: String,
@@ -21,6 +22,7 @@ data class FullPersonModel(
     constructor(origin: FullPerson, privacy: Boolean = false) : this(
         origin.username,
         origin.name,
+        origin.sex,
         origin.major,
         origin.collage,
         origin.majorId,
