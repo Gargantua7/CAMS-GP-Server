@@ -10,7 +10,6 @@ import com.gargantua7.cams.gp.server.matchWechat
  */
 data class PersonInfoUpdateModel(
     val username: String,
-    val name: String?,
     val majorId: String?,
     val phone: String?,
     val wechat: String?
