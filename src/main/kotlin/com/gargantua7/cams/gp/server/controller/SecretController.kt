@@ -84,7 +84,6 @@ class SecretController {
     @PostMapping("/private/secret/update")
     fun update(@RequestBody info: PasswordUpdateModel) {
         val (old, new) = info
-        info.match()
         val username = SecurityUtils.getSubject().principal as String
         secretService.updateSecret(username, new, old)
         signOut()

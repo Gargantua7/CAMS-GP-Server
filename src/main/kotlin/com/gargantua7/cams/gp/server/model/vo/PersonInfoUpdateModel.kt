@@ -14,9 +14,12 @@ data class PersonInfoUpdateModel(
     val phone: String?,
     val wechat: String?
 ) {
-    fun require() {
+    init {
         if (!matchUsername(username) || !matchPhone(phone) || !matchWechat(wechat)) {
             throw BadRequestException.RequestParamFormatException("Wrong Request Param Format")
         }
+        require(!matchUsername(username)) { "Invalid Username" }
+        require(!matchPhone(phone)) { "Invalid Phone Number" }
+        require(!matchWechat(wechat)) { "Invalid Wechat ID" }
     }
 }

@@ -54,7 +54,6 @@ class PersonController {
     @RequiresAuthentication
     @PostMapping("/person/info/update")
     fun update(@RequestBody model: PersonInfoUpdateModel) {
-        model.require()
         val requesterId = SecurityUtils.getSubject().principal as String
         val updated = personService.selectPersonByUsername(model.username)
         if (requesterId != model.username) {

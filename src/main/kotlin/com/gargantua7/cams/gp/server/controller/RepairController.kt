@@ -35,7 +35,6 @@ class RepairController {
     @RequiresAuthentication
     @PostMapping("/repair/create")
     fun createNewRepair(@RequestBody model: NewRepairModel) {
-        model.require()
         val repair = Repair(
             title = model.title,
             content = model.content,

@@ -15,6 +15,9 @@ open class BadRequestException(info: String, cause: Throwable? = null) : ResultE
     class RequestParamFormatException(info: String, cause: Throwable? = null) :
             BadRequestException("Wrong Request Parma Format: $info", cause)
 
+    class NotSupportParamException(info: String, cause: Throwable? = null):
+            BadRequestException("Wrong Param: $info", cause)
+
 }
 
 open class AuthorizedException(info: String, cause: Throwable? = null) : ResultException(401, "Authorized", info, cause) {

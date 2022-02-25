@@ -69,7 +69,7 @@ class ExceptionHandler {
     @ExceptionHandler(IllegalArgumentException::class)
     fun illegalArgumentException(httpServletRequest: HttpServletRequest, e: IllegalArgumentException): Failure {
         logger.error("[${httpServletRequest.requestURI}] Illegal Argument Exception : ${e.message}")
-        return Failure(500, "Internal Server Error", "IllegalArgumentException")
+        return Result.failure(BadRequestException("Illegal Argument", e))
     }
 
     @ExceptionHandler(Exception::class)
