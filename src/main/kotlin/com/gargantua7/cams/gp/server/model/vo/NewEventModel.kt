@@ -1,6 +1,5 @@
 package com.gargantua7.cams.gp.server.model.vo
 
-import com.gargantua7.cams.gp.server.exception.BadRequestException
 import java.time.LocalDateTime
 
 /**
