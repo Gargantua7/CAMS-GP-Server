@@ -23,4 +23,15 @@ class EventDao {
         return database.events.add(event.entity)
     }
 
+    fun createNewEventTable(name: String): Boolean {
+        val sql = """CREATE TABLE IF NOT EXISTS `event-${name}` (
+                id VARCHAR(12) UNIQUE PRIMARY KEY NOT NULL,
+                time DATETIME NOT NULL 
+                )
+            """.trimMargin()
+        database.useConnection {
+            return it.prepareStatement(sql).execute()
+        }
+    }
+
 }

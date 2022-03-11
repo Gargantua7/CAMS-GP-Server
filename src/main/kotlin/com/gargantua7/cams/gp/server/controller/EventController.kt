@@ -6,8 +6,7 @@ import com.gargantua7.cams.gp.server.services.EventService
 import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.apache.shiro.authz.annotation.RequiresPermissions
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 /**
  * @author Gargantua7
@@ -21,8 +20,8 @@ class EventController {
 
     @RequiresAuthentication
     @RequiresPermissions("d_Club")
-    @RequestMapping("/event/create")
-    fun createNewEvent(model: NewEventModel) {
+    @PostMapping("/event/create")
+    fun createNewEvent(@RequestBody model: NewEventModel) {
         eventService.createNewEvent(
             Event(
                 name = model.name,
