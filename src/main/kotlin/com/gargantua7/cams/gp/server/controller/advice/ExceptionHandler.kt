@@ -55,7 +55,10 @@ class ExceptionHandler {
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
-    fun httpRequestMethodNotSupportedExceptionHandler(httpServletRequest: HttpServletRequest, e: HttpRequestMethodNotSupportedException): Failure {
+    fun httpRequestMethodNotSupportedExceptionHandler(
+        httpServletRequest: HttpServletRequest,
+        e: HttpRequestMethodNotSupportedException
+    ): Failure {
         logger.warn("[${httpServletRequest.requestURI}] ${e.message}")
         return Result.failure(BadRequestException("Http Request Method Not Supported", e))
     }
