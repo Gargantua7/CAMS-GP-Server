@@ -34,4 +34,16 @@ class EventController {
             )
         )
     }
+
+    @GetMapping("/event/id/list")
+    fun getAllEventIdList() = eventService.selectAllEventId()
+
+    @GetMapping("/event/{eventId}/get")
+    fun getEventById(@PathVariable eventId: Long) = eventService.selectEventById(eventId)
+
+    @RequiresAuthentication
+    @PostMapping("/event/{eventId}/sign")
+    fun signUpForEvent(@PathVariable eventId: Long) {
+        eventService.signUpForEvent(eventId)
+    }
 }

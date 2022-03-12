@@ -18,6 +18,9 @@ open class BadRequestException(info: String, cause: Throwable? = null) : ResultE
     class NotSupportParamException(info: String, cause: Throwable? = null):
             BadRequestException("Wrong Param: $info", cause)
 
+    class CurrentlyNotAllowedException(cause: Throwable? = null) :
+            BadRequestException("Currently Not Allowed", cause)
+
 }
 
 open class AuthorizedException(info: String, cause: Throwable? = null) : ResultException(401, "Authorized", info, cause) {

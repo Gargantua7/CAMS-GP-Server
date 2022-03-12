@@ -1,10 +1,12 @@
 package com.gargantua7.cams.gp.server.dao
 
 import com.gargantua7.cams.gp.server.model.dto.Event
+import com.gargantua7.cams.gp.server.model.po.EventSigns
 import com.gargantua7.cams.gp.server.model.po.Events
 import org.ktorm.database.Database
-import org.ktorm.entity.add
-import org.ktorm.entity.sequenceOf
+import org.ktorm.dsl.eq
+import org.ktorm.dsl.insert
+import org.ktorm.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
@@ -23,6 +25,14 @@ class EventDao {
         return database.events.add(event.entity)
     }
 
+    fun selectEventById(id: Long): Event {
+        return database.events.filter { it.id eq id }.single().value
+    }
+
+    fun selectAllEventId(): List<Long> {
+        return database.events.toList().map { it.id }
+    }
+
     fun createNewEventTable(eventId: Long): Boolean {
         val sql = """
             CREATE TABLE IF NOT EXISTS `event-${eventId}` (
@@ -37,4 +47,15 @@ class EventDao {
         }
     }
 
+    fun signUpForEvent(event: Long, id: String): Int {
+        val table = EventSigns("event-$event")
+        return database.insert(table) {
+            set(table.id, id)
+        }
+    }
+
+    fun selectCountSignAtEventByEventId(id: Long): Int {
+        val table = EventSigns("event-$id")
+        return database.sequenceOf(table).count()
+    }
 }
