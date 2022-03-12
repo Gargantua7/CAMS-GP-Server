@@ -16,7 +16,7 @@ class EventService {
 
     fun createNewEvent(event: Event) {
         eventDao.insertNewEvent(event)
-        eventDao.createNewEventTable(event.id.toString())
+        eventDao.createNewEventTable(event.id)
     }
 
 }
