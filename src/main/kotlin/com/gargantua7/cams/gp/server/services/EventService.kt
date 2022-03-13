@@ -25,7 +25,7 @@ class EventService {
 
     fun selectEventById(eventId: Long) = eventDao.selectEventById(eventId)
 
-    fun selectAllEventId() = eventDao.selectAllEventId()
+    fun selectAllEvent(page: Int) = eventDao.selectAllEvent(page)
 
     fun signUpForEvent(eventId: Long) {
         val event = eventDao.selectEventById(eventId)

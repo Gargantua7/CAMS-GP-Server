@@ -1,9 +1,11 @@
 package com.gargantua7.cams.gp.server.controller
 
-import com.gargantua7.cams.gp.server.exception.AuthorizedException
 import com.gargantua7.cams.gp.server.exception.BadRequestException
 import com.gargantua7.cams.gp.server.model.dto.Repair
 import com.gargantua7.cams.gp.server.model.dto.Reply
+import com.gargantua7.cams.gp.server.model.dto.SearchRepairModel
+import com.gargantua7.cams.gp.server.model.vo.FullRepairModel
+import com.gargantua7.cams.gp.server.model.vo.FullReplyModel
 import com.gargantua7.cams.gp.server.model.vo.NewRepairModel
 import com.gargantua7.cams.gp.server.model.vo.NewRepairReplyModel
 import com.gargantua7.cams.gp.server.services.PersonService
@@ -59,41 +61,17 @@ class RepairController {
         repairService.changeStateByIDWithAuth(id, state == "open")
     }
 
-    @GetMapping("/repair/id/list")
-    fun getAll(): List<Long> {
-        return repairService.selectAllRepairIDList()
-    }
-
-    @GetMapping("/repair/get/id/{id}")
-    fun getByRepairID(@PathVariable id: Long): Repair {
-        val repair = repairService.selectRepairByID(id)
-        if (!repair.private) return repair
-        val requestId =
-            (SecurityUtils.getSubject().principal as String?)
-                ?: throw AuthorizedException.InsufficientPermissionsException()
-        if (requestId == repair.initiator || requestId == repair.principal) return repair
-        val requester = personService.selectPersonByUsername(requestId)
-        if (requester.permissionLevel > 3 && requester.depId == 1) return repair
-        throw AuthorizedException.InsufficientPermissionsException()
-    }
-
-
-    @GetMapping("/repair/id/list/person/{username}")
-    fun getByPersonUsername(@PathVariable username: String): List<Long> {
-        return repairService.selectRepairIDListByPerson(username)
-    }
-
-    @RequiresAuthentication
-    @RequiresRoles("dep:1")
-    @RequiresPermissions("Dep")
-    @GetMapping("/repair/id/list/unassigned")
-    fun getUnassigned(): List<Long> {
-        return repairService.selectRepairIDWithUnassigned()
-    }
-
-    @GetMapping("/repair/id/list/keyword/{key}")
-    fun search(@PathVariable key: String): List<Long> {
-        return repairService.selectRepairIDListByKeyword(key)
+    @GetMapping("/repair/search/{page}")
+    fun getAllByPage(@RequestBody model: SearchRepairModel, @PathVariable page: Int): List<FullRepairModel> {
+        val requesterId = SecurityUtils.getSubject().principal as String?
+        val requester = requesterId?.let { personService.selectPersonByUsername(it) }
+        val requesterPermission = requester?.permissionLevel ?: -99
+        return repairService.selectAllRepairList(model, page).map {
+            it.toVo(
+                requesterId != it.initiator.username && requesterPermission <= it.initiator.permission,
+                requesterId != it.principal?.username && requesterPermission <= (it.principal?.permission ?: -99)
+            )
+        }
     }
 
 
@@ -112,13 +90,22 @@ class RepairController {
         replyService.insertNewReply(reply)
     }
 
-    @GetMapping("/repair/{id}/reply/list")
-    fun getReplyListWithRepairID(@PathVariable id: Long): List<Long> {
-        return replyService.selectReplyIDListByRepairUUID(id)
+    @GetMapping("/repair/{id}/reply/list/{page}")
+    fun getReplyListWithRepairID(@PathVariable id: Long, @PathVariable page: Int): List<FullReplyModel> {
+        val requesterId = SecurityUtils.getSubject().principal as String?
+        val requester = requesterId?.let { personService.selectPersonByUsername(it) }
+        val requesterPermission = requester?.permissionLevel ?: -99
+        return replyService.selectReplyListByRepairUUID(id, page).map {
+            it.toVo(requesterId != it.sender.username && requesterPermission <= it.sender.permission)
+        }
     }
 
     @GetMapping("/repair/reply/get/{id}")
-    fun getReplyByID(@PathVariable id: Long): Reply {
+    fun getReplyByID(@PathVariable id: Long): FullReplyModel {
+        val requesterId = SecurityUtils.getSubject().principal as String?
+        val requester = requesterId?.let { personService.selectPersonByUsername(it) }
+        val requesterPermission = requester?.permissionLevel ?: -99
         return replyService.selectReplyByID(id)
+            .let { it.toVo(requesterId != it.sender.username && requesterPermission <= it.sender.permission) }
     }
 }

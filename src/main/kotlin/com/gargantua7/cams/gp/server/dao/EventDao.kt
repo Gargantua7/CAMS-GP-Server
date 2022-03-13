@@ -4,8 +4,7 @@ import com.gargantua7.cams.gp.server.model.dto.Event
 import com.gargantua7.cams.gp.server.model.po.EventSigns
 import com.gargantua7.cams.gp.server.model.po.Events
 import org.ktorm.database.Database
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.insert
+import org.ktorm.dsl.*
 import org.ktorm.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
@@ -29,8 +28,23 @@ class EventDao {
         return database.events.filter { it.id eq id }.single().value
     }
 
-    fun selectAllEventId(): List<Long> {
-        return database.events.toList().map { it.id }
+    fun selectAllEvent(page: Int): List<Event> {
+        return database
+            .from(Events)
+            .select()
+            .limit(page * 10, 10)
+            .map {
+                Event(
+                    it[Events.id]!!,
+                    it[Events.name]!!,
+                    it[Events.content]!!,
+                    it[Events.number]!!,
+                    it[Events.location]!!,
+                    it[Events.eventTime]!!,
+                    it[Events.startTime]!!,
+                    it[Events.endTime]!!
+                )
+            }
     }
 
     fun createNewEventTable(eventId: Long): Boolean {

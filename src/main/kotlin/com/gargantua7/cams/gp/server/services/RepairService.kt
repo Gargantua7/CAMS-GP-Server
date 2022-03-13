@@ -3,9 +3,10 @@ package com.gargantua7.cams.gp.server.services
 import com.gargantua7.cams.gp.server.dao.RepairDao
 import com.gargantua7.cams.gp.server.dao.ReplyDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
-import com.gargantua7.cams.gp.server.exception.NotFoundException
+import com.gargantua7.cams.gp.server.model.dto.FullRepair
 import com.gargantua7.cams.gp.server.model.dto.Repair
 import com.gargantua7.cams.gp.server.model.dto.Reply
+import com.gargantua7.cams.gp.server.model.dto.SearchRepairModel
 import org.apache.shiro.SecurityUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -42,28 +43,8 @@ class RepairService {
         )
     }
 
-    fun selectAllRepairIDList(): List<Long> {
-        return repairDao.selectAllRepairID()
-    }
-
-    fun selectRepairByID(id: Long): Repair {
-        try {
-            return repairDao.selectRepairByID(id)
-        } catch (e: NoSuchElementException) {
-            throw NotFoundException("Repair[$id] Not Found", e)
-        }
-    }
-
-    fun selectRepairIDListByKeyword(key: String): List<Long> {
-        return repairDao.selectRepairIDListByKeyword(key)
-    }
-
-    fun selectRepairIDListByPerson(person: String): List<Long> {
-        return repairDao.selectRepairIDListByPerson(person)
-    }
-
-    fun selectRepairIDWithUnassigned(): List<Long> {
-        return repairDao.selectRepairIDWithUnassigned()
+    fun selectAllRepairList(model: SearchRepairModel, page: Int): List<FullRepair> {
+        return repairDao.selectRepairByConditional(model, page)
     }
 
     fun changeStateByIDWithAuth(id: Long, state: Boolean) {

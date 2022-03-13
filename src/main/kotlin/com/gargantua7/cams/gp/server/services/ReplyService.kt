@@ -3,6 +3,7 @@ package com.gargantua7.cams.gp.server.services
 import com.gargantua7.cams.gp.server.dao.RepairDao
 import com.gargantua7.cams.gp.server.dao.ReplyDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
+import com.gargantua7.cams.gp.server.model.dto.FullReply
 import com.gargantua7.cams.gp.server.model.dto.Reply
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -32,16 +33,16 @@ class ReplyService {
         repairDao.refreshUpdateTime(reply.repair)
     }
 
-    fun selectReplyIDListByRepairUUID(repairID: Long): List<Long> {
+    fun selectReplyListByRepairUUID(repairID: Long, page: Int): List<FullReply> {
         if (!repairService.permissionCheck(repairID)) {
             throw AuthorizedException.InsufficientPermissionsException()
         }
-        return replyDao.selectReplyIDListByRepairID(repairID)
+        return replyDao.selectReplyListByRepairID(repairID, page)
     }
 
-    fun selectReplyByID(id: Long): Reply {
+    fun selectReplyByID(id: Long): FullReply {
         val reply = replyDao.selectReplyByID(id)
-        if (!repairService.permissionCheck(reply.repair)) {
+        if (!repairService.permissionCheck(reply.repairId)) {
             throw AuthorizedException.InsufficientPermissionsException()
         }
         return reply

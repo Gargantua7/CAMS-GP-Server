@@ -3,7 +3,7 @@ package com.gargantua7.cams.gp.server.dao
 import com.gargantua7.cams.gp.server.model.dto.FullPerson
 import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.po.*
-import com.gargantua7.cams.gp.server.model.vo.SearchPersonModel
+import com.gargantua7.cams.gp.server.model.dto.SearchPersonModel
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.*

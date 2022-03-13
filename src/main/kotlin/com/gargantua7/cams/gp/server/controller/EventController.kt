@@ -35,8 +35,8 @@ class EventController {
         )
     }
 
-    @GetMapping("/event/id/list")
-    fun getAllEventIdList() = eventService.selectAllEventId()
+    @GetMapping("/event/list/{page}")
+    fun getAllEventList(@PathVariable page: Int) = eventService.selectAllEvent(page)
 
     @GetMapping("/event/{eventId}/get")
     fun getEventById(@PathVariable eventId: Long) = eventService.selectEventById(eventId)

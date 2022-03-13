@@ -8,7 +8,7 @@ import java.time.LocalDateTime
  * @author Gargantua7
  */
 data class Reply(
-    val uuid: Long = Snowflake.instance.nextId(),
+    val id: Long = Snowflake.instance.nextId(),
     val repair: Long,
     val sender: String,
     val type: Int = 0,
@@ -26,7 +26,7 @@ data class Reply(
 
     val entity
         get() = ReplyEntity {
-            id = this@Reply.uuid
+            id = this@Reply.id
             repair = this@Reply.repair
             sender = this@Reply.sender
             type = this@Reply.type

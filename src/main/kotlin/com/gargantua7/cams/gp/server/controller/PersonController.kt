@@ -4,7 +4,7 @@ import com.gargantua7.cams.gp.server.exception.AuthorizedException
 import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.vo.FullPersonModel
 import com.gargantua7.cams.gp.server.model.vo.PersonInfoUpdateModel
-import com.gargantua7.cams.gp.server.model.vo.SearchPersonModel
+import com.gargantua7.cams.gp.server.model.dto.SearchPersonModel
 import com.gargantua7.cams.gp.server.services.PersonService
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
