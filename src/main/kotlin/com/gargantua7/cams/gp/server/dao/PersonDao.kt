@@ -3,6 +3,7 @@ package com.gargantua7.cams.gp.server.dao
 import com.gargantua7.cams.gp.server.model.dto.FullPerson
 import com.gargantua7.cams.gp.server.model.dto.Person
 import com.gargantua7.cams.gp.server.model.po.*
+import com.gargantua7.cams.gp.server.model.vo.SearchPersonModel
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.*
@@ -28,13 +29,7 @@ class PersonDao {
         return database.persons.filter { it.username eq username }.single().value
     }
 
-    fun selectPersonListByName(name: String): List<Person> {
-        return database.persons.filter { it.name like "$name%" }
-            .sortedBy({ it.depId.asc() }, { it.permissionLevel.desc() })
-            .map { it.value }
-    }
-
-    fun selectFullPersonByUsername(username: String): FullPerson {
+    fun selectPersonByConditional(person: SearchPersonModel, page: Int): List<FullPerson> {
         return database
             .from(Persons)
             .leftJoin(Departments, Persons.depId eq Departments.id)
@@ -42,19 +37,12 @@ class PersonDao {
             .leftJoin(Collages, Majors.collageId eq Collages.id)
             .leftJoin(Permissions, Persons.permissionLevel eq Permissions.level)
             .select()
-            .where { Persons.username eq username }
-            .mapToFullPersonList().single()
-    }
-
-    fun selectFullPersonListByName(name: String): List<FullPerson> {
-        return database
-            .from(Persons)
-            .leftJoin(Departments, Persons.depId eq Departments.id)
-            .leftJoin(Majors, Persons.majorId eq Majors.id)
-            .leftJoin(Collages, Majors.collageId eq Collages.id)
-            .leftJoin(Permissions, Persons.permissionLevel eq Permissions.level)
-            .select().where { Persons.name like "$name%" }
-            .orderBy(Persons.depId.asc(), Persons.permissionLevel.desc())
+            .run { person.username?.let { where { Persons.username eq it } } ?: this }
+            .run { person.name?.let { where { Persons.name like "$it%" } } ?: this }
+            .run { person.sex?.let { where { Persons.sex eq it } } ?: this }
+            .run { person.depId?.let { where { Persons.depId eq it } } ?: this }
+            .run { person.permissionLevel?.let { where { Persons.permissionLevel eq it } } ?: this }
+            .limit(page * 10, 10)
             .mapToFullPersonList()
     }
 
