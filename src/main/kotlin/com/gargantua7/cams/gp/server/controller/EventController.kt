@@ -54,4 +54,11 @@ class EventController {
         eventService.signUpForEvent(eventId)
         msgService.sendMsg(Message.Event(SecurityUtils.getSubject().principal as String, eventId))
     }
+
+    @RequiresAuthentication
+    @RequiresPermissions("d_Club")
+    @PostMapping("/event/{id}/list/{page}")
+    fun getSignList(@PathVariable id: Long, @PathVariable page: Int): List<FullPerson> {
+        return eventService.selectEventAllSign(id, page)
+    }
 }

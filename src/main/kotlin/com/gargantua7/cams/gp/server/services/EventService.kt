@@ -1,9 +1,11 @@
 package com.gargantua7.cams.gp.server.services
 
 import com.gargantua7.cams.gp.server.dao.EventDao
+import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.exception.BadRequestException
 import com.gargantua7.cams.gp.server.exception.ForbiddenException
 import com.gargantua7.cams.gp.server.model.dto.Event
+import com.gargantua7.cams.gp.server.model.dto.FullPerson
 import org.apache.shiro.SecurityUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -35,4 +37,11 @@ class EventService {
             throw ForbiddenException("Event signed is full")
         eventDao.signUpForEvent(eventId, SecurityUtils.getSubject().principal as String)
     }
+
+    fun selectEventAllSign(id: Long, page: Int): List<FullPerson> {
+        return eventDao.selectEventAllSign(id, page).map {
+            personDao.selectFullPersonByUsername(it)
+        }
+    }
+
 }

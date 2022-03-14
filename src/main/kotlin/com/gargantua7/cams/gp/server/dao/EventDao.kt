@@ -72,4 +72,13 @@ class EventDao {
         val table = EventSigns("event-$id")
         return database.sequenceOf(table).count()
     }
+
+    fun selectEventAllSign(id: Long, page: Int): List<String> {
+        val table = EventSigns("event-$id")
+        return database
+            .from(table)
+            .select()
+            .limit(page * 10, 10)
+            .map { it[table.id]!! }
+    }
 }
