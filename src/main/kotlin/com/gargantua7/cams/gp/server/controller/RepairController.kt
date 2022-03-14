@@ -1,6 +1,7 @@
 package com.gargantua7.cams.gp.server.controller
 
 import com.gargantua7.cams.gp.server.exception.BadRequestException
+import com.gargantua7.cams.gp.server.model.dto.Message
 import com.gargantua7.cams.gp.server.model.dto.Repair
 import com.gargantua7.cams.gp.server.model.dto.Reply
 import com.gargantua7.cams.gp.server.model.dto.SearchRepairModel
@@ -8,6 +9,7 @@ import com.gargantua7.cams.gp.server.model.vo.FullRepairModel
 import com.gargantua7.cams.gp.server.model.vo.FullReplyModel
 import com.gargantua7.cams.gp.server.model.vo.NewRepairModel
 import com.gargantua7.cams.gp.server.model.vo.NewRepairReplyModel
+import com.gargantua7.cams.gp.server.services.MsgService
 import com.gargantua7.cams.gp.server.services.PersonService
 import com.gargantua7.cams.gp.server.services.RepairService
 import com.gargantua7.cams.gp.server.services.ReplyService
@@ -24,6 +26,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(produces = ["application/json;charset=UTF-8"])
 class RepairController {
+
+    @Autowired
+    private lateinit var msgService: MsgService
 
     @Autowired
     private lateinit var replyService: ReplyService
@@ -51,7 +56,11 @@ class RepairController {
     @RequiresPermissions("Dep")
     @PostMapping("/repair/{id}/assign/{principle}")
     fun assignPrincipal(@PathVariable id: Long, @PathVariable principle: String) {
-        repairService.assignPrincipleByID(id, principle)
+        val su = repairService.assignPrincipleByID(id, principle)
+        if (!su) return
+        val repair = repairService.selectRepairById(id)
+        msgService.sendMsg(Message.Repair(repair.initiator, id))
+        msgService.sendMsg(Message.Repair(repair.principal!!, id))
     }
 
     @RequiresAuthentication
@@ -82,12 +91,16 @@ class RepairController {
     fun addReply(@PathVariable id: Long, @RequestBody model: NewRepairReplyModel) {
         if (model.content.isBlank())
             throw BadRequestException.RequestParamFormatException("Content Must Not Empty Or Blank")
+        val sender = SecurityUtils.getSubject().principal as String
         val reply = Reply(
             repair = id,
-            sender = SecurityUtils.getSubject().principal as String,
+            sender = sender,
             content = model.content
         )
         replyService.insertNewReply(reply)
+        val repair = repairService.selectRepairById(id)
+        msgService.sendMsg(Message.Reply(sender, repair.initiator, id))
+        repair.principal?.let { msgService.sendMsg(Message.Reply(sender, it, id)) }
     }
 
     @GetMapping("/repair/{id}/reply/list/{page}")

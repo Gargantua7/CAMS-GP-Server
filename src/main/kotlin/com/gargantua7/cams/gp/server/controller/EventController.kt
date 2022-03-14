@@ -1,8 +1,12 @@
 package com.gargantua7.cams.gp.server.controller
 
 import com.gargantua7.cams.gp.server.model.dto.Event
+import com.gargantua7.cams.gp.server.model.dto.FullPerson
+import com.gargantua7.cams.gp.server.model.dto.Message
 import com.gargantua7.cams.gp.server.model.vo.NewEventModel
 import com.gargantua7.cams.gp.server.services.EventService
+import com.gargantua7.cams.gp.server.services.MsgService
+import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
 import org.apache.shiro.authz.annotation.RequiresPermissions
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +18,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(produces = ["application/json;charset=UTF-8"])
 class EventController {
+
+    @Autowired
+    private lateinit var msgService: MsgService
 
     @Autowired
     private lateinit var eventService: EventService
@@ -45,5 +52,6 @@ class EventController {
     @PostMapping("/event/{eventId}/sign")
     fun signUpForEvent(@PathVariable eventId: Long) {
         eventService.signUpForEvent(eventId)
+        msgService.sendMsg(Message.Event(SecurityUtils.getSubject().principal as String, eventId))
     }
 }

@@ -6,19 +6,19 @@ import java.time.LocalDateTime
 /**
  * @author Gargantua7
  */
-data class Message(
+sealed class Message(
     val sender: String,
     val recipient: String,
-    val type: Type = Type.NORMAL,
+    val type: String,
     val content: String,
     val time: LocalDateTime = LocalDateTime.now()
-): Serializable {
+) : Serializable {
 
-    enum class Type(value: String) {
-        NORMAL("normal"),
-        REPAIR("repair"),
-        REPLY("reply"),
-        EVENT("event")
-    }
+    class Normal(sender: String, recipient: String, content: String) : Message(sender, recipient, "Normal", content)
 
+    class Repair(recipient: String, id: Long) : Message("10001", recipient, "Repair", id.toString())
+
+    class Reply(sender: String, recipient: String, id: Long) : Message(sender, recipient, "Reply", id.toString())
+
+    class Event(recipient: String, id: Long) : Message("10001", recipient, "Reply", id.toString())
 }

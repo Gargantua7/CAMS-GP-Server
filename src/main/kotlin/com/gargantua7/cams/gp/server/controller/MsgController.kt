@@ -24,10 +24,10 @@ class MsgController {
     @RequiresAuthentication
     @PostMapping("/msg/send")
     fun send(@RequestBody msgModel: NewMsgModel) {
-        val msg = Message(
-            sender = SecurityUtils.getSubject().principal as String,
-            recipient = msgModel.recipient,
-            content = msgModel.content
+        val msg = Message.Normal(
+            SecurityUtils.getSubject().principal as String,
+            msgModel.recipient,
+            msgModel.content
         )
         msgService.sendMsg(msg)
     }

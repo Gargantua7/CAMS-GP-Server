@@ -29,10 +29,10 @@ class RepairService {
         repairDao.insert(repair)
     }
 
-    fun assignPrincipleByID(id: Long, principle: String) {
+    fun assignPrincipleByID(id: Long, principle: String): Boolean {
         val repair = repairDao.selectRepairByID(id)
-        if (repair.principal == principle) return
-        repairDao.assignPrincipleByID(id, principle)
+        if (repair.principal == principle) return false
+        val line = repairDao.assignPrincipleByID(id, principle)
         replyDao.insertNewReply(
             Reply(
                 repair = id,
@@ -41,10 +41,15 @@ class RepairService {
                 content = principle
             )
         )
+        return line == 1
     }
 
     fun selectAllRepairList(model: SearchRepairModel, page: Int): List<FullRepair> {
         return repairDao.selectRepairByConditional(model, page)
+    }
+
+    fun selectRepairById(id: Long): Repair {
+        return repairDao.selectRepairByID(id)
     }
 
     fun changeStateByIDWithAuth(id: Long, state: Boolean) {
