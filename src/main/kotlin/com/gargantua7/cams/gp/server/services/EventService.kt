@@ -18,6 +18,9 @@ import java.time.LocalDateTime
 class EventService {
 
     @Autowired
+    private lateinit var personDao: PersonDao
+
+    @Autowired
     private lateinit var eventDao: EventDao
 
     fun createNewEvent(event: Event) {

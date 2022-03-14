@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.server.services
 
+import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.dao.RepairDao
 import com.gargantua7.cams.gp.server.dao.ReplyDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
@@ -18,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class RepairService {
+
+    @Autowired
+    private lateinit var personDao: PersonDao
 
     @Autowired
     private lateinit var replyDao: ReplyDao
@@ -45,7 +49,19 @@ class RepairService {
     }
 
     fun selectAllRepairList(model: SearchRepairModel, page: Int): List<FullRepair> {
-        return repairDao.selectRepairByConditional(model, page)
+        return repairDao.selectRepairByConditional(model, page).map {
+            FullRepair(
+                it.id,
+                it.title,
+                it.content,
+                personDao.selectFullPersonByUsername(it.initiator),
+                it.principal?.let { s -> personDao.selectFullPersonByUsername(s) },
+                it.initTime,
+                it.updateTime,
+                it.state,
+                it.private
+            )
+        }
     }
 
     fun selectRepairById(id: Long): Repair {

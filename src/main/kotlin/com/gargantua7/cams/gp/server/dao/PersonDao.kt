@@ -46,6 +46,18 @@ class PersonDao {
             .mapToFullPersonList()
     }
 
+    fun selectFullPersonByUsername(username: String): FullPerson {
+        return database
+            .from(Persons)
+            .leftJoin(Departments, Persons.depId eq Departments.id)
+            .leftJoin(Majors, Persons.majorId eq Majors.id)
+            .leftJoin(Collages, Majors.collageId eq Collages.id)
+            .leftJoin(Permissions, Persons.permissionLevel eq Permissions.level)
+            .select()
+            .where { Persons.username eq username }
+            .mapToFullPersonList().single()
+    }
+
     private fun Query.mapToFullPersonList(): List<FullPerson> {
         return map { row ->
             FullPerson(
