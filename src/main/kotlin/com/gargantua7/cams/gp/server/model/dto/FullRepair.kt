@@ -15,7 +15,8 @@ data class FullRepair(
     val initTime: LocalDateTime,
     val updateTime: LocalDateTime,
     val state: Boolean = true,
-    val private: Boolean = false
+    val private: Boolean = false,
+    val reply: Int = 0
 ) {
     fun toVo(initiatorPrivacy: Boolean = false, principalPrivacy: Boolean = false) =
         FullRepairModel(this, initiatorPrivacy, principalPrivacy)

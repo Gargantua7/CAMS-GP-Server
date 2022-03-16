@@ -3,10 +3,12 @@ package com.gargantua7.cams.gp.server.dao
 import com.gargantua7.cams.gp.server.model.dto.Reply
 import com.gargantua7.cams.gp.server.model.po.Replies
 import org.ktorm.database.Database
+import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.limit
 import org.ktorm.dsl.map
 import org.ktorm.entity.add
+import org.ktorm.entity.count
 import org.ktorm.entity.filter
 import org.ktorm.entity.sequenceOf
 import org.springframework.beans.factory.annotation.Autowired
@@ -53,4 +55,8 @@ class ReplyDao {
         }.single()
     }
 
+
+    fun selectCountReplyAtRepair(id: Long): Int {
+        return database.replies.filter { it.repair eq id and (it.type eq 0) }.count()
+    }
 }

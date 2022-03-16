@@ -15,7 +15,8 @@ data class FullRepairModel(
     val initTime: LocalDateTime,
     val updateTime: LocalDateTime,
     val state: Boolean = true,
-    val private: Boolean = false
+    val private: Boolean = false,
+    val reply: Int = 0
 ) {
     constructor(origin: FullRepair, initiatorPrivacy: Boolean = false, principalPrivacy: Boolean = false) : this(
         origin.id,
@@ -26,6 +27,7 @@ data class FullRepairModel(
         origin.initTime,
         origin.updateTime,
         origin.state,
-        origin.private
+        origin.private,
+        origin.reply
     )
 }

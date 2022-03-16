@@ -59,7 +59,8 @@ class RepairService {
                 it.initTime,
                 it.updateTime,
                 it.state,
-                it.private
+                it.private,
+                replyDao.selectCountReplyAtRepair(it.id)
             )
         }
     }
