@@ -57,7 +57,7 @@ class EventController {
 
     @RequiresAuthentication
     @RequiresPermissions("d_Club")
-    @PostMapping("/event/{id}/list/{page}")
+    @GetMapping("/event/{id}/list/{page}")
     fun getSignList(@PathVariable id: Long, @PathVariable page: Int): List<FullPerson> {
         return eventService.selectEventAllSign(id, page)
     }
