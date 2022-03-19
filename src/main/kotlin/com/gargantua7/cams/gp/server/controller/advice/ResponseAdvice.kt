@@ -34,9 +34,6 @@ class ResponseAdvice : ResponseBodyAdvice<Any> {
     ): Any {
         return when (body) {
             is Result -> body
-            is List<*> -> Result.success(object {
-                val list = body
-            })
             else -> Result.success(body)
         }
     }
