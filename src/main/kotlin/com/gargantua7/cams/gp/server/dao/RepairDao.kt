@@ -30,24 +30,27 @@ class RepairDao {
     }
 
     fun selectRepairByConditional(model: SearchRepairModel, page: Int): List<Repair> {
-        return database.repairs
+        return database.from(Repairs)
+            .select()
             .let {
                 if (checkPermission()) it
-                else it.filter {
+                else it.where {
                     val requesterId = SecurityUtils.getSubject().principal as String? ?: ""
                     (Repairs.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId)
                 }
             }
-            .run { model.id?.let { filter { rp -> rp.id eq it } } ?: this }
+            .run { model.id?.let { where { Repairs.id eq it } } ?: this }
             .run {
-                model.keyword?.let { filter { rp -> rp.title like "%$it%" or (rp.content like "%$it%") } } ?: this
+                model.keyword?.let { where { Repairs.title like "%$it%" or (Repairs.content like "%$it%") } } ?: this
             }
-            .run { model.initiator?.let { filter { rp -> rp.initiator eq it } } ?: this }
-            .run { model.state?.let { filter { rp -> rp.state eq it } } ?: this }
+            .run { model.initiator?.let { where { Repairs.initiator eq it } } ?: this }
+            .run { model.state?.let { where { Repairs.state eq it } } ?: this }
             .run {
-                if (model.unassigned) filter { rp -> rp.principal.isNull() }
-                else model.principal?.let { filter { rp -> rp.principal eq it } } ?: this
-            }.query.limit(page * 10, page).map {
+                if (model.unassigned) where { Repairs.principal.isNull() }
+                else model.principal?.let { where { Repairs.principal eq it } } ?: this
+            }.orderBy(Repairs.updateTime.desc())
+            .limit(page * 10, 10)
+            .map {
                 Repair(
                     it[Repairs.id]!!,
                     it[Repairs.title]!!,

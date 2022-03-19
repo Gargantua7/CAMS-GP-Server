@@ -32,6 +32,7 @@ class EventDao {
         return database
             .from(Events)
             .select()
+            .orderBy(Events.startTime.desc())
             .limit(page * 10, 10)
             .map {
                 Event(
