@@ -71,7 +71,7 @@ class RepairController {
     }
 
     @GetMapping("/repair/search/{page}")
-    fun getAllByPage(@RequestBody model: SearchRepairModel, @PathVariable page: Int): List<FullRepairModel> {
+    fun getAllByPage(model: SearchRepairModel, @PathVariable page: Int): List<FullRepairModel> {
         val requesterId = SecurityUtils.getSubject().principal as String?
         val requester = requesterId?.let { personService.selectPersonByUsername(it) }
         val requesterPermission = requester?.permissionLevel ?: -99

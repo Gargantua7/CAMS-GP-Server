@@ -22,7 +22,7 @@ class PersonController {
     private lateinit var personService: PersonService
 
     @GetMapping("/person/info/search/{page}")
-    fun searchByConditional(@RequestBody model: SearchPersonModel, @PathVariable page: Int): List<FullPersonModel> {
+    fun searchByConditional(model: SearchPersonModel, @PathVariable page: Int): List<FullPersonModel> {
         val requesterId = SecurityUtils.getSubject().principal as String?
         val requester = requesterId?.let { personService.selectPersonByUsername(it) }
         val requesterPermission = requester?.permissionLevel ?: -99
