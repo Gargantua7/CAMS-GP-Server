@@ -53,7 +53,7 @@ class RepairDao {
                     it[Repairs.title]!!,
                     it[Repairs.content]!!,
                     it[Repairs.initiator]!!,
-                    it[Repairs.principal]!!,
+                    it[Repairs.principal],
                     it[Repairs.initTime]!!,
                     it[Repairs.updateTime]!!,
                     it[Repairs.state]!!,
