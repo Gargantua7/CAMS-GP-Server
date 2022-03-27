@@ -4,10 +4,7 @@ import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.dao.RepairDao
 import com.gargantua7.cams.gp.server.dao.ReplyDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
-import com.gargantua7.cams.gp.server.model.dto.FullRepair
-import com.gargantua7.cams.gp.server.model.dto.Repair
-import com.gargantua7.cams.gp.server.model.dto.Reply
-import com.gargantua7.cams.gp.server.model.dto.SearchRepairModel
+import com.gargantua7.cams.gp.server.model.dto.*
 import org.apache.shiro.SecurityUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -67,6 +64,23 @@ class RepairService {
 
     fun selectRepairById(id: Long): Repair {
         return repairDao.selectRepairByID(id)
+    }
+
+    fun selectFullRepairById(id: Long): FullRepair {
+        return selectRepairById(id).let {
+            FullRepair(
+                it.id,
+                it.title,
+                it.content,
+                personDao.selectFullPersonByUsername(it.initiator),
+                it.principal?.let { s -> personDao.selectFullPersonByUsername(s) },
+                it.initTime,
+                it.updateTime,
+                it.state,
+                it.private,
+                replyDao.selectCountReplyAtRepair(it.id)
+            )
+        }
     }
 
     fun changeStateByIDWithAuth(id: Long, state: Boolean) {

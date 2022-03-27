@@ -9,12 +9,14 @@ import com.gargantua7.cams.gp.server.model.dto.FullPerson
 import org.apache.shiro.SecurityUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 /**
  * @author Gargantua7
  */
 @Service
+@Transactional
 class EventService {
 
     @Autowired

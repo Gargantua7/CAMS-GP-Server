@@ -2,9 +2,9 @@ package com.gargantua7.cams.gp.server.controller
 
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
 import com.gargantua7.cams.gp.server.model.dto.Person
+import com.gargantua7.cams.gp.server.model.dto.SearchPersonModel
 import com.gargantua7.cams.gp.server.model.vo.FullPersonModel
 import com.gargantua7.cams.gp.server.model.vo.PersonInfoUpdateModel
-import com.gargantua7.cams.gp.server.model.dto.SearchPersonModel
 import com.gargantua7.cams.gp.server.services.PersonService
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authz.annotation.RequiresAuthentication
@@ -27,6 +27,23 @@ class PersonController {
         val requester = requesterId?.let { personService.selectPersonByUsername(it) }
         val requesterPermission = requester?.permissionLevel ?: -99
         return personService.selectPersonByConditional(model, page).map {
+            it.toVo(requesterId != it.username && requesterPermission <= it.permission)
+        }
+    }
+
+    @RequiresAuthentication
+    @GetMapping("/person/info/get/me")
+    fun getMe(): FullPersonModel {
+        val me = SecurityUtils.getSubject().principal as String
+        return personService.selectFullPersonByUsername(me).toVo()
+    }
+
+    @GetMapping("/person/info/get/{username}")
+    fun getPersonByUsername(@PathVariable username: String): FullPersonModel {
+        val requesterId = SecurityUtils.getSubject().principal as String?
+        val requester = requesterId?.let { personService.selectPersonByUsername(it) }
+        val requesterPermission = requester?.permissionLevel ?: -99
+        return personService.selectFullPersonByUsername(username).let {
             it.toVo(requesterId != it.username && requesterPermission <= it.permission)
         }
     }

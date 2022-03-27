@@ -14,7 +14,7 @@ data class FullPersonModel(
     val majorId: String,
     val dep: String,
     val depId: Int,
-    val permission: Int?,
+    val permission: Int,
     val title: String,
     val phone: String?,
     val wechat: String?
@@ -28,7 +28,7 @@ data class FullPersonModel(
         origin.majorId,
         origin.dep,
         origin.depId,
-        if (privacy) null else origin.permission,
+        origin.permission,
         origin.title,
         if (privacy) null else origin.phone,
         if (privacy) null else origin.wechat

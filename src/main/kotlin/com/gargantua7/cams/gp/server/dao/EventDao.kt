@@ -51,11 +51,12 @@ class EventDao {
     fun createNewEventTable(eventId: Long): Boolean {
         val sql = """
             CREATE TABLE IF NOT EXISTS `event-${eventId}` (
-                id VARCHAR(12) UNIQUE PRIMARY KEY NOT NULL UNIQUE,
+                id INT AUTO_INCREMENT UNIQUE PRIMARY KEY NOT NULL,
+                username VARCHAR(12),
                 time DATETIME NOT NULL DEFAULT (NOW()),
                 CONSTRAINT `event-${eventId}_person_username_fk`
-                FOREIGN KEY (id) REFERENCES cams_gp.person (username)
-            );
+                FOREIGN KEY (username) REFERENCES cams_gp.person (username)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
             """.trimMargin()
         database.useConnection {
             return it.prepareStatement(sql).execute()

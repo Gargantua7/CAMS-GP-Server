@@ -83,6 +83,20 @@ class RepairController {
         }
     }
 
+    @RequiresAuthentication
+    @GetMapping("/repair/get/{id}")
+    fun getRepairById(@PathVariable id: Long) {
+        val requesterId = SecurityUtils.getSubject().principal as String?
+        val requester = requesterId?.let { personService.selectPersonByUsername(it) }
+        val requesterPermission = requester?.permissionLevel ?: -99
+        return repairService.selectFullRepairById(id).let {
+            it.toVo(
+                requesterId != it.initiator.username && requesterPermission <= it.initiator.permission,
+                requesterId != it.principal?.username && requesterPermission <= (it.principal?.permission ?: -99)
+            )
+        }
+    }
+
 
     // -------- Repair Reply -------------
 

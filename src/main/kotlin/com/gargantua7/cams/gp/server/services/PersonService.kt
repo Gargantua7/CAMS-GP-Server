@@ -31,6 +31,10 @@ class PersonService {
         return personDao.selectPersonByConditional(model, page)
     }
 
+    fun selectFullPersonByUsername(username: String): FullPerson {
+        return personDao.selectFullPersonByUsername(username)
+    }
+
     fun updatePersonByModel(person: Person) {
         personDao.updatePersonByModel(person)
     }
