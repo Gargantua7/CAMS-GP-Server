@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.gargantua7"
-version = "0.1.2"
+version = "0.1.4"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -25,7 +25,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.code.gson:gson:2.9.0")
-    implementation("org.apache.shiro:shiro-spring:1.8.0")
+    implementation("org.apache.shiro:shiro-spring:1.9.0")
     implementation("org.ktorm:ktorm-core:3.4.1")
     implementation("org.ktorm:ktorm-support-mysql:3.4.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
