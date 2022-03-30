@@ -39,16 +39,18 @@ class RepairDao {
                     (Repairs.private eq false) or (Repairs.initiator eq requesterId) or (Repairs.principal eq requesterId)
                 }
             }
-            .run { model.id?.let { where { Repairs.id eq it } } ?: this }
-            .run {
-                model.keyword?.let { where { Repairs.title like "%$it%" or (Repairs.content like "%$it%") } } ?: this
+            .whereWithConditions { conditions ->
+                model.id?.let { conditions += Repairs.id eq it }
+                model.keyword?.let { conditions += Repairs.title like "%$it%" or (Repairs.content like "%$it%") }
+                model.initiator?.let { conditions += Repairs.initiator eq it }
+                model.state?.let { conditions += Repairs.state eq it }
+                if (model.unassigned) {
+                    conditions += Repairs.principal.isNull()
+                } else model.principal?.let {
+                    conditions += Repairs.principal eq it
+                }
             }
-            .run { model.initiator?.let { where { Repairs.initiator eq it } } ?: this }
-            .run { model.state?.let { where { Repairs.state eq it } } ?: this }
-            .run {
-                if (model.unassigned) where { Repairs.principal.isNull() }
-                else model.principal?.let { where { Repairs.principal eq it } } ?: this
-            }.orderBy(Repairs.updateTime.desc())
+            .orderBy(Repairs.updateTime.desc())
             .limit(page * 10, 10)
             .map {
                 Repair(

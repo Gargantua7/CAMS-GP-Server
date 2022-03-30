@@ -2,8 +2,8 @@ package com.gargantua7.cams.gp.server.dao
 
 import com.gargantua7.cams.gp.server.model.dto.FullPerson
 import com.gargantua7.cams.gp.server.model.dto.Person
-import com.gargantua7.cams.gp.server.model.po.*
 import com.gargantua7.cams.gp.server.model.dto.SearchPersonModel
+import com.gargantua7.cams.gp.server.model.po.*
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.*
@@ -37,12 +37,15 @@ class PersonDao {
             .leftJoin(Collages, Majors.collageId eq Collages.id)
             .leftJoin(Permissions, Persons.permissionLevel eq Permissions.level)
             .select()
-            .run { person.username?.let { where { Persons.username eq it } } ?: this }
-            .run { person.name?.let { where { Persons.name like "$it%" } } ?: this }
-            .run { person.sex?.let { where { Persons.sex eq it } } ?: this }
-            .run { person.depId?.let { where { Persons.depId eq it } } ?: this }
-            .run { person.permissionLevel?.let { where { Persons.permissionLevel eq it } } ?: this }
-            .limit(page * 10, 10)
+            .whereWithConditions { conditions ->
+                person.username?.let { conditions += Persons.username eq it }
+                person.username?.let { conditions += Persons.username eq it }
+                person.name?.let { conditions += Persons.name like "$it%" }
+                person.sex?.let { conditions += Persons.sex eq it }
+                person.depId?.let { conditions += Persons.depId eq it }
+                person.permissionLevel?.let { conditions += Persons.permissionLevel eq it }
+
+            }.limit(page * 10, 10)
             .mapToFullPersonList()
     }
 
