@@ -81,7 +81,17 @@ class PersonDao {
     }
 
     fun updatePersonByModel(person: Person): Int {
-        return database.persons.update(person.entity)
+        return person.entity.let {
+            val line = database.persons.update(it)
+            if (it.phone.isNullOrEmpty() || it.wechat.isNullOrEmpty()) {
+                database.update(Persons) { table ->
+                    it.phone?.let { p -> set(table.phone, p.ifEmpty { null }) }
+                    it.wechat?.let { w -> set(table.wechat, w.ifEmpty { null }) }
+                    where { table.username eq it.username }
+                }
+            } else line
+        }
+
     }
 
 }
