@@ -81,7 +81,7 @@ class SecretController {
     }
 
     @RequiresAuthentication
-    @PostMapping("/private/secret/update")
+    @PostMapping("/secret/update")
     fun update(@RequestBody info: PasswordUpdateModel) {
         val (old, new) = info
         val username = SecurityUtils.getSubject().principal as String
