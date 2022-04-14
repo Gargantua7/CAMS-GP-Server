@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 /**
  * @author Gargantua7
  */
-sealed class Message(
+open class Message(
     val sender: String,
     val recipient: String,
     val type: String,
