@@ -18,6 +18,7 @@ object Repairs: Table<RepairEntity>("repair") {
     val updateTime = datetime("update_time").bindTo { it.updateTime }
     val state = boolean("state").bindTo { it.state }
     val private = boolean("private").bindTo { it.private }
+    val del = boolean("del")
 }
 
 interface RepairEntity: Entity<RepairEntity> {

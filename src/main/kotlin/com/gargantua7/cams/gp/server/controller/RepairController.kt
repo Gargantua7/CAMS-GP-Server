@@ -60,7 +60,7 @@ class RepairController {
         if (!su) return
         val repair = repairService.selectRepairById(id)
         msgService.sendMsg(Message.Repair(repair.initiator, id))
-        msgService.sendMsg(Message.Repair(repair.principal!!, id))
+        repair.principal?.let { msgService.sendMsg(Message.Repair(it, id)) }
     }
 
     @RequiresAuthentication
@@ -95,6 +95,14 @@ class RepairController {
             )
         }
     }
+
+    @RequiresAuthentication
+    @RequiresPermissions("Admin")
+    @PostMapping("/repair/delete/{id}")
+    fun deleteRepair(@PathVariable id: Long) {
+        repairService.deleteRepairByID(id)
+    }
+
 
 
     // -------- Repair Reply -------------
@@ -133,5 +141,12 @@ class RepairController {
         val requesterPermission = requester?.permissionLevel ?: -99
         return replyService.selectReplyByID(id)
             .let { it.toVo(requesterId != it.sender.username && requesterPermission <= it.sender.permission) }
+    }
+
+    @RequiresAuthentication
+    @RequiresPermissions("Admin")
+    @PostMapping("/repair/reply/delete/{id}")
+    fun deleteReply(@PathVariable id: Long) {
+        replyService.deleteReplyByID(id)
     }
 }

@@ -15,6 +15,7 @@ object Replies : Table<ReplyEntity>("repair_reply") {
     val type = int("type").bindTo { it.type }
     val content = text("content").bindTo { it.content }
     val time = datetime("time").bindTo { it.time }
+    val del = boolean("del")
 }
 
 interface ReplyEntity: Entity<ReplyEntity> {

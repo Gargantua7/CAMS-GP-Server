@@ -20,5 +20,5 @@ open class Message(
 
     class Reply(sender: String, recipient: String, id: Long) : Message(sender, recipient, "Reply", id.toString())
 
-    class Event(recipient: String, id: Long) : Message("10001", recipient, "Reply", id.toString())
+    class Event(recipient: String, id: Long) : Message("10001", recipient, "Event", id.toString())
 }

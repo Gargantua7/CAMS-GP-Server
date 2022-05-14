@@ -1,12 +1,10 @@
 package com.gargantua7.cams.gp.server.dao
 
 import com.gargantua7.cams.gp.server.model.dto.Reply
+import com.gargantua7.cams.gp.server.model.po.Repairs
 import com.gargantua7.cams.gp.server.model.po.Replies
 import org.ktorm.database.Database
-import org.ktorm.dsl.and
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.limit
-import org.ktorm.dsl.map
+import org.ktorm.dsl.*
 import org.ktorm.entity.add
 import org.ktorm.entity.count
 import org.ktorm.entity.filter
@@ -30,7 +28,9 @@ class ReplyDao {
     }
 
     fun selectReplyListByRepairID(repairID: Long, page: Int): List<Reply> {
-        return database.replies.filter { it.repair eq repairID }.query.limit(10 * page, 10).map {
+        return database.replies.filter {
+            (it.repair eq repairID) and (it.del eq false)
+        }.query.limit(10 * page, 10).map {
             Reply(
                 it[Replies.id]!!,
                 it[Replies.repair]!!,
@@ -58,5 +58,12 @@ class ReplyDao {
 
     fun selectCountReplyAtRepair(id: Long): Int {
         return database.replies.filter { it.repair eq id and (it.type eq 0) }.count()
+    }
+
+    fun deleteReplyByID(id: Long): Int {
+        return database.update(Replies) {
+            set(it.del, true)
+            where { it.id eq id }
+        }
     }
 }

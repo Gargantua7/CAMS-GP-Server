@@ -6,7 +6,12 @@ import com.gargantua7.cams.gp.server.exception.BadRequestException
 import com.gargantua7.cams.gp.server.exception.ForbiddenException
 import com.gargantua7.cams.gp.server.model.dto.Event
 import com.gargantua7.cams.gp.server.model.dto.FullPerson
+import com.gargantua7.cams.gp.server.model.po.Collages
+import com.gargantua7.cams.gp.server.model.po.EventSigns
+import com.gargantua7.cams.gp.server.model.po.Majors
+import com.gargantua7.cams.gp.server.model.po.Persons
 import org.apache.shiro.SecurityUtils
+import org.ktorm.dsl.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -48,5 +53,15 @@ class EventService {
             personDao.selectFullPersonByUsername(it)
         }
     }
+
+    fun count(id: Long): Int = eventDao.count(id)
+
+    fun sexGroup(id: Long) = eventDao.sexGroup(id)
+
+    fun timeGroup(id: Long) = eventDao.timeGroup(id)
+
+    fun collageGroup(id: Long) = eventDao.collageGroup(id)
+
+    fun majorGroup(id: Long) = eventDao.majorGroup(id)
 
 }

@@ -49,6 +49,7 @@ class RepairDao {
                 } else model.principal?.let {
                     conditions += Repairs.principal eq it
                 }
+                conditions += Repairs.del eq false
             }
             .orderBy(Repairs.updateTime.desc())
             .limit(page * 10, 10)
@@ -95,5 +96,12 @@ class RepairDao {
     private fun checkPermission(): Boolean {
         val subject = SecurityUtils.getSubject()
         return subject.hasRole("dep:1") && subject.isPermitted("Dep")
+    }
+
+    fun deleteRepairByID(id: Long): Int {
+        return database.update(Repairs) {
+            set(it.del, true)
+            where { it.id eq id }
+        }
     }
 }

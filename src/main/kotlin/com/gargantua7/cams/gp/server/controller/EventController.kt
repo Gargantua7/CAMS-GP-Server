@@ -43,10 +43,10 @@ class EventController {
     }
 
     @GetMapping("/event/list/{page}")
-    fun getAllEventList(@PathVariable page: Int) = eventService.selectAllEvent(page)
+    fun tList(@PathVariable page: Int) = eventService.selectAllEvent(page)
 
     @GetMapping("/event/{eventId}/get")
-    fun getEventById(@PathVariable eventId: Long) = eventService.selectEventById(eventId)
+    fun ggetAllEvenetEventById(@PathVariable eventId: Long) = eventService.selectEventById(eventId)
 
     @RequiresAuthentication
     @PostMapping("/event/{eventId}/sign")
@@ -61,4 +61,27 @@ class EventController {
     fun getSignList(@PathVariable id: Long, @PathVariable page: Int): List<FullPerson> {
         return eventService.selectEventAllSign(id, page)
     }
+
+    @GetMapping("/event/{id}/statistics/count")
+    fun count(@PathVariable id: Long): Int = eventService.count(id)
+
+    @RequiresAuthentication
+    @RequiresPermissions("d_Club")
+    @GetMapping("/event/{id}/statistics/groupBy/sex")
+    fun sexGroup(@PathVariable id: Long) = eventService.sexGroup(id)
+
+    @RequiresAuthentication
+    @RequiresPermissions("d_Club")
+    @GetMapping("/event/{id}/statistics/groupBy/time")
+    fun timeGroup(@PathVariable id: Long) = eventService.timeGroup(id)
+
+    @RequiresAuthentication
+    @RequiresPermissions("d_Club")
+    @GetMapping("/event/{id}/statistics/groupBy/collage")
+    fun collageGroup(@PathVariable id: Long) = eventService.collageGroup(id)
+
+    @RequiresAuthentication
+    @RequiresPermissions("d_Club")
+    @GetMapping("/event/{id}/statistics/groupBy/major")
+    fun majorGroup(@PathVariable id: Long) = eventService.majorGroup(id)
 }

@@ -4,6 +4,7 @@ import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.dao.RepairDao
 import com.gargantua7.cams.gp.server.dao.ReplyDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
+import com.gargantua7.cams.gp.server.exception.NotFoundException
 import com.gargantua7.cams.gp.server.model.dto.*
 import org.apache.shiro.SecurityUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -113,5 +114,10 @@ class RepairService {
             repair.initiator,
             repair.principal
         ))
+    }
+
+    fun deleteRepairByID(id: Long) {
+        val line = repairDao.deleteRepairByID(id)
+        if (line == 0) throw NotFoundException("Repair[$id] not found")
     }
 }

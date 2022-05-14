@@ -4,6 +4,7 @@ import com.gargantua7.cams.gp.server.dao.PersonDao
 import com.gargantua7.cams.gp.server.dao.RepairDao
 import com.gargantua7.cams.gp.server.dao.ReplyDao
 import com.gargantua7.cams.gp.server.exception.AuthorizedException
+import com.gargantua7.cams.gp.server.exception.NotFoundException
 import com.gargantua7.cams.gp.server.model.dto.FullReply
 import com.gargantua7.cams.gp.server.model.dto.Reply
 import org.springframework.beans.factory.annotation.Autowired
@@ -68,5 +69,10 @@ class ReplyService {
             reply.content,
             reply.time
         )
+    }
+
+    fun deleteReplyByID(id: Long) {
+        val line = replyDao.deleteReplyByID(id)
+        if (line == 0) throw NotFoundException("Reply[$id] not found")
     }
 }
